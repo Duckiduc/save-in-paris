@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, InputNumber, Button, Space, Divider, Row, Col, Switch } from 'antd';
-import { CalculatorOutlined } from '@ant-design/icons';
+import { Form, Input, Select, InputNumber, Button, Space, Divider, Row, Col, Switch, Card, Typography, Tooltip, Alert } from 'antd';
+import { CalculatorOutlined, InfoCircleOutlined, EyeOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
+const { Title, Text, Paragraph } = Typography;
 
 const SavingsCalculator = ({ onCalculationComplete }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [showMethodology, setShowMethodology] = useState(false);
 
   const ageRanges = [
     { value: '18-25', label: '18-25 ans (Gen Z)' },
@@ -95,6 +97,87 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
   return (
     <div className="web3-form-container">
+      {/* Methodology Explanation Card */}
+      <Card 
+        title={
+          <span style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+            <InfoCircleOutlined style={{ marginRight: 8 }} />
+            Comment fonctionne le calculateur ?
+          </span>
+        }
+        style={{ 
+          marginBottom: 24,
+          background: 'rgba(10, 11, 13, 0.6)',
+          border: '1px solid rgba(120, 219, 255, 0.2)'
+        }}
+        extra={
+          <Button 
+            type="link" 
+            icon={<EyeOutlined />}
+            onClick={() => setShowMethodology(!showMethodology)}
+            style={{ color: '#78dbff' }}
+          >
+            {showMethodology ? 'Masquer' : 'Voir la méthode'}
+          </Button>
+        }
+      >
+        {showMethodology && (
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <Alert
+              message="Données utilisées dans les calculs"
+              description={
+                <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    • <strong>Transport :</strong> Pass Navigo moyen (84€ Paris, 88.80€ banlieue)
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    • <strong>Alimentation :</strong> 350€/mois + 200€ par personne à charge
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    • <strong>Taux d'épargne recommandé par âge :</strong>
+                    <br />- 18-25 ans : 12% (constitution épargne de précaution)
+                    <br />- 26-35 ans : 17% (projet immobilier)
+                    <br />- 36-45 ans : 22% (constitution patrimoine)
+                    <br />- 46-55 ans : 27% (préparation retraite)
+                    <br />- 55+ ans : 20% (sécurisation patrimoine)
+                  </Paragraph>
+                </div>
+              }
+              type="info"
+              style={{ 
+                background: 'rgba(24, 144, 255, 0.1)',
+                border: '1px solid rgba(24, 144, 255, 0.3)'
+              }}
+            />
+            
+            <Alert
+              message="Formule de calcul utilisée"
+              description={
+                <div style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    <strong>1. Dépenses totales =</strong> Loyer + Transport + Alimentation + Autres dépenses
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    <strong>2. Épargne possible =</strong> Salaire net - Dépenses totales
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8, color: 'inherit' }}>
+                    <strong>3. Taux d'épargne réel =</strong> (Épargne possible / Salaire net) × 100
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 0, color: 'inherit' }}>
+                    <strong>4. Épargne recommandée =</strong> Salaire net × Taux recommandé pour votre âge
+                  </Paragraph>
+                </div>
+              }
+              type="success"
+              style={{ 
+                background: 'rgba(82, 196, 26, 0.1)',
+                border: '1px solid rgba(82, 196, 26, 0.3)'
+              }}
+            />
+          </Space>
+        )}
+      </Card>
+
       <Form
         form={form}
         layout="vertical"
@@ -105,7 +188,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
         <Row gutter={[16, 24]}>
           <Col span={24}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Salaire net mensuel (€)</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Salaire net mensuel (€)
+                  <Tooltip title="Votre salaire après déduction des charges sociales et impôts. C'est la base de tous nos calculs." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="salary"
               rules={[
                 { required: true, message: 'Veuillez saisir votre salaire' },
@@ -124,7 +214,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Tranche d'âge</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Tranche d'âge
+                  <Tooltip title="Votre âge détermine le taux d'épargne recommandé selon les objectifs de vie typiques (logement, famille, retraite)." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="ageRange"
               rules={[{ required: true, message: 'Sélectionnez votre âge' }]}
             >
@@ -141,7 +238,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Zone géographique</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Zone géographique
+                  <Tooltip title="Les coûts de transport varient selon votre zone : Pass Navigo 84€ (Paris) vs 88.80€ (banlieue)." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="location"
               rules={[{ required: true, message: 'Sélectionnez votre localisation' }]}
             >
@@ -158,7 +262,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Type de logement</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Type de logement
+                  <Tooltip title="Le type de logement influence le loyer et les charges. Un studio coûte moins cher qu'un T4." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="housingType"
               rules={[{ required: true, message: 'Veuillez sélectionner le type de logement' }]}
             >
@@ -177,7 +288,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Êtes-vous propriétaire ?</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Êtes-vous propriétaire ?
+                  <Tooltip title="Indiquez si vous possédez votre logement. Cela impacte le calcul du loyer et des dépenses." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="isOwner"
               valuePropName="checked"
             >
@@ -193,7 +311,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
               {({ getFieldValue }) =>
                 !getFieldValue('isOwner') ? (
                   <Form.Item
-                    label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Loyer mensuel (charges comprises)</span>}
+                    label={
+                      <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                        Loyer mensuel (charges comprises)
+                        <Tooltip title="Inclut le loyer + charges (eau, électricité, chauffage, internet). Représente généralement 30-40% du budget." placement="top">
+                          <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                        </Tooltip>
+                      </span>
+                    }
                     name="rent"
                     rules={[{ required: true, message: 'Veuillez entrer votre loyer' }]}
                   >
@@ -212,7 +337,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Autres dépenses mensuelles</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Autres dépenses mensuelles
+                  <Tooltip title="Inclut : assurances, téléphone, loisirs, vêtements, frais médicaux non remboursés, etc." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="additionalExpenses"
             >
               <InputNumber
@@ -227,7 +359,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Nombre de personnes à charge</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Nombre de personnes à charge
+                  <Tooltip title="Chaque personne à charge ajoute environ 200€/mois au budget alimentaire." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="dependents"
               initialValue={0}
             >
@@ -243,7 +382,14 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
 
           <Col xs={24} sm={12}>
             <Form.Item
-              label={<span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>Épargne actuelle</span>}
+              label={
+                <span style={{ color: 'rgba(255, 255, 255, 0.9)', fontWeight: 600 }}>
+                  Épargne actuelle
+                  <Tooltip title="Montant total de votre épargne existante (tous comptes confondus). Utilisé pour les projections futures." placement="top">
+                    <InfoCircleOutlined style={{ marginLeft: 4, color: '#78dbff' }} />
+                  </Tooltip>
+                </span>
+              }
               name="currentSavings"
             >
               <InputNumber
