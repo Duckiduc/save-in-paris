@@ -1,0 +1,651 @@
+/* App.css - Web3 Design System */
+
+.layout {
+  min-height: 100vh;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0b0d 0%, #1a1b1e 100%);
+  background-attachment: fixed;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.layout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 98px,
+      rgba(120, 219, 255, 0.03) 100px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 98px,
+      rgba(255, 119, 198, 0.03) 100px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.header {
+  background: rgba(10, 11, 13, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(120, 219, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 64px;
+}
+
+.logo-icon {
+  font-size: 32px;
+  background: linear-gradient(135deg, #78dbff, #ff77c6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-right: 16px;
+  filter: drop-shadow(0 0 10px rgba(120, 219, 255, 0.3));
+}
+
+.header-title {
+  background: linear-gradient(135deg, #ffffff, #78dbff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin: 0 !important;
+  font-weight: 700 !important;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+.content {
+  padding: 0 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 64px 32px;
+  background: rgba(10, 11, 13, 0.4);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  margin: 32px 0;
+  border: 1px solid rgba(120, 219, 255, 0.2);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle, rgba(120, 219, 255, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+.hero-title {
+  background: linear-gradient(135deg, #ffffff, #78dbff, #ff77c6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-size: 3.5rem !important;
+  font-weight: 800 !important;
+  margin-bottom: 24px !important;
+  filter: drop-shadow(0 0 20px rgba(120, 219, 255, 0.3));
+  position: relative;
+  z-index: 2;
+}
+
+.hero-description {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 1.3rem !important;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+}
+
+.main-content {
+  margin: 48px 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* Web3 Card Design */
+.calculator-card,
+.results-placeholder,
+.ant-card {
+  background: rgba(10, 11, 13, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(120, 219, 255, 0.2) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+.calculator-card::before,
+.results-placeholder::before,
+.ant-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(120, 219, 255, 0.1), transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.calculator-card .ant-card-head,
+.results-placeholder .ant-card-head,
+.ant-card .ant-card-head {
+  background: linear-gradient(135deg, 
+    rgba(120, 219, 255, 0.2), 
+    rgba(255, 119, 198, 0.2)) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(120, 219, 255, 0.2) !important;
+  border-radius: 20px 20px 0 0 !important;
+  position: relative;
+  z-index: 2;
+}
+
+.calculator-card .ant-card-head-title,
+.results-placeholder .ant-card-head-title,
+.ant-card .ant-card-head-title {
+  background: linear-gradient(135deg, #ffffff, #78dbff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+}
+
+.calculator-card .ant-card-head-title .anticon,
+.results-placeholder .ant-card-head-title .anticon,
+.ant-card .ant-card-head-title .anticon {
+  background: linear-gradient(135deg, #78dbff, #ff77c6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 10px rgba(120, 219, 255, 0.3));
+}
+
+.calculator-card .ant-card-body,
+.results-placeholder .ant-card-body,
+.ant-card .ant-card-body {
+  position: relative;
+  z-index: 2;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.placeholder-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 1.1rem;
+  padding: 40px 20px;
+}
+
+/* Full-width content section */
+.full-width-section {
+  margin: 48px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.full-width-section .ant-card {
+  background: rgba(10, 11, 13, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(120, 219, 255, 0.2) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tips section styling */
+.tips-section {
+  margin: 48px 0;
+}
+
+.tips-section .ant-card {
+  background: rgba(10, 11, 13, 0.6) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 119, 198, 0.2) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.tips-section .ant-card-head {
+  background: linear-gradient(135deg, 
+    rgba(255, 119, 198, 0.2), 
+    rgba(120, 219, 255, 0.2)) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(255, 119, 198, 0.2) !important;
+  border-radius: 20px 20px 0 0 !important;
+}
+
+/* Footer styling */
+.footer {
+  background: rgba(10, 11, 13, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  border-top: 1px solid rgba(120, 219, 255, 0.2) !important;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 24px 0 !important;
+  margin-top: 64px;
+}
+
+/* Animations */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 20px rgba(120, 219, 255, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 0 30px rgba(120, 219, 255, 0.5);
+  }
+}
+
+/* Hover effects */
+.calculator-card:hover,
+.results-placeholder:hover,
+.ant-card:hover {
+  animation: glow 2s ease-in-out infinite;
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* BackTop button styling */
+.ant-back-top {
+  background: rgba(10, 11, 13, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+  border-radius: 50% !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.ant-back-top:hover {
+  background: rgba(120, 219, 255, 0.2) !important;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+/* Web3 Form Styling */
+.web3-form-container {
+  position: relative;
+  z-index: 2;
+}
+
+.web3-form .ant-form-item-label > label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.web3-input,
+.web3-select {
+  background: rgba(10, 11, 13, 0.8) !important;
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.web3-input:hover,
+.web3-select:hover {
+  border-color: rgba(120, 219, 255, 0.6) !important;
+  box-shadow: 0 0 15px rgba(120, 219, 255, 0.2) !important;
+}
+
+.web3-input:focus,
+.web3-select:focus {
+  border-color: #78dbff !important;
+  box-shadow: 0 0 20px rgba(120, 219, 255, 0.4) !important;
+  outline: none !important;
+}
+
+.web3-input input {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border: none !important;
+}
+
+.web3-input .ant-input-number-input {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.web3-input .ant-input-number-handler-wrap {
+  background: rgba(120, 219, 255, 0.1) !important;
+  border-left: 1px solid rgba(120, 219, 255, 0.3) !important;
+}
+
+.web3-input .ant-input-number-handler {
+  border: none !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.web3-input .ant-input-number-handler:hover {
+  color: #78dbff !important;
+  background: rgba(120, 219, 255, 0.2) !important;
+}
+
+.web3-select .ant-select-selector {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.web3-select .ant-select-selection-placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.web3-button:hover {
+  background: linear-gradient(135deg, #ff77c6, #78dbff) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 40px rgba(120, 219, 255, 0.5) !important;
+}
+
+/* Switch styling */
+.ant-switch-checked {
+  background: linear-gradient(135deg, #78dbff, #ff77c6) !important;
+  box-shadow: 0 2px 10px rgba(120, 219, 255, 0.3) !important;
+}
+
+.ant-switch {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+}
+
+/* Form validation styling */
+.ant-form-item-has-error .web3-input,
+.ant-form-item-has-error .web3-select {
+  border-color: rgba(255, 77, 79, 0.6) !important;
+  box-shadow: 0 0 15px rgba(255, 77, 79, 0.3) !important;
+}
+
+.ant-form-item-explain-error {
+  color: rgba(255, 119, 198, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Web3 Statistics and Progress Styling */
+.ant-statistic {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-statistic-title {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.ant-statistic-content {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ant-statistic-content-prefix {
+  background: linear-gradient(135deg, #78dbff, #ff77c6) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  filter: drop-shadow(0 0 10px rgba(120, 219, 255, 0.3));
+}
+
+/* Progress Bar Styling */
+.ant-progress-bg {
+  background: linear-gradient(90deg, #78dbff, #ff77c6) !important;
+  box-shadow: 0 2px 10px rgba(120, 219, 255, 0.3) !important;
+}
+
+.ant-progress-outer {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.ant-progress-inner {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+.ant-progress-text {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Alert Styling */
+.ant-alert {
+  background: rgba(10, 11, 13, 0.8) !important;
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-alert-success {
+  border-color: rgba(82, 196, 26, 0.5) !important;
+  background: rgba(82, 196, 26, 0.1) !important;
+}
+
+.ant-alert-warning {
+  border-color: rgba(255, 193, 7, 0.5) !important;
+  background: rgba(255, 193, 7, 0.1) !important;
+}
+
+.ant-alert-error {
+  border-color: rgba(255, 77, 79, 0.5) !important;
+  background: rgba(255, 77, 79, 0.1) !important;
+}
+
+.ant-alert-message {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+}
+
+.ant-alert-icon {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Web3 Chart Styling */
+.recharts-wrapper {
+  background: rgba(10, 11, 13, 0.4) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(120, 219, 255, 0.1) !important;
+}
+
+.recharts-text {
+  fill: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 500 !important;
+}
+
+.recharts-legend-wrapper {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.recharts-tooltip-wrapper {
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+  border-radius: 8px !important;
+  background: rgba(10, 11, 13, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.recharts-default-tooltip {
+  background: rgba(10, 11, 13, 0.95) !important;
+  border: 1px solid rgba(120, 219, 255, 0.3) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Typography Styling */
+.ant-typography {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5 {
+  color: rgba(255, 255, 255, 0.95) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.ant-typography strong {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 700 !important;
+}
+
+/* List Component Text Styling */
+.ant-list-item {
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.ant-list-item-meta-title {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-list-item-meta-description {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Paragraph and Text Styling */
+.ant-typography p,
+.ant-typography span,
+.ant-typography div {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Card Content Text */
+.ant-card-body p,
+.ant-card-body span,
+.ant-card-body div,
+.ant-card-body li {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Title and Header Text */
+.ant-card-head-title {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+}
+
+/* General Text Override */
+* {
+  color: inherit;
+}
+
+body, 
+.ant-app,
+.ant-card,
+.ant-list,
+.ant-typography-title,
+.ant-typography-paragraph {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+  
+  .hero-description {
+    font-size: 1.1rem !important;
+  }
+  
+  .hero-section {
+    padding: 48px 24px;
+    margin: 24px 0;
+  }
+  
+  .content {
+    padding: 0 16px;
+  }
+  
+  .main-content {
+    margin: 32px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem !important;
+  }
+  
+  .hero-section {
+    padding: 32px 16px;
+  }
+  
+  .calculator-card,
+  .results-placeholder,
+  .ant-card {
+    border-radius: 16px !important;
+  }
+}
