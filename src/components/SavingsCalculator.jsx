@@ -201,7 +201,6 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
                       style={{ width: '100%' }}
                       min={0}
                       max={5000}
-                      addonAfter="€"
                       placeholder="1200"
                       className="web3-input"
                     />
@@ -220,7 +219,6 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
                 style={{ width: '100%' }}
                 min={0}
                 max={5000}
-                addonAfter="€"
                 placeholder="500"
                 className="web3-input"
               />
@@ -254,7 +252,6 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
                 max={1000000}
                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                addonAfter="€"
                 placeholder="10000"
                 className="web3-input"
               />
