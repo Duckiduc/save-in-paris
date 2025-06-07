@@ -1,13 +1,32 @@
-import React, { useState } from 'react';
-import { Layout, Typography, Card, Row, Col, Divider, BackTop, Tabs } from 'antd';
-import { CalculatorOutlined, InfoCircleOutlined, LineChartOutlined, RiseOutlined, BookOutlined, HomeOutlined, CarOutlined, ShoppingOutlined, BankOutlined, WarningOutlined } from '@ant-design/icons';
-import SavingsCalculator from './components/SavingsCalculator';
-import ResultsDisplay from './components/ResultsDisplay';
-import TipsAndAdvice from './components/TipsAndAdvice';
-import DataVisualization from './components/DataVisualization';
-import SavingsProjection from './components/SavingsProjection';
-import GuideInfo from './components/GuideInfo';
-import './App.css';
+import { useState } from "react";
+import {
+  Layout,
+  Typography,
+  Card,
+  Row,
+  Col,
+  Divider,
+  BackTop,
+  Tabs,
+} from "antd";
+import {
+  CalculatorOutlined,
+  InfoCircleOutlined,
+  LineChartOutlined,
+  BookOutlined,
+  HomeOutlined,
+  CarOutlined,
+  ShoppingOutlined,
+  BankOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import SavingsCalculator from "./components/SavingsCalculator";
+import ResultsDisplay from "./components/ResultsDisplay";
+import TipsAndAdvice from "./components/TipsAndAdvice";
+import DataVisualization from "./components/DataVisualization";
+import SavingsProjection from "./components/SavingsProjection";
+import GuideInfo from "./components/GuideInfo";
+import "./App.css";
 
 const { Header, Content, Footer } = Layout;
 const { Title, Paragraph } = Typography;
@@ -28,7 +47,7 @@ function App() {
         <div className="header-content">
           <CalculatorOutlined className="logo-icon" />
           <Title level={2} className="header-title">
-            Calculateur d'Épargne Paris
+            Calculateur d&apos;Épargne Paris
           </Title>
         </div>
       </Header>
@@ -39,36 +58,39 @@ function App() {
             Optimisez votre épargne à Paris
           </Title>
           <Paragraph className="hero-description">
-            Calculez votre capacité d'épargne en tenant compte du coût de la vie parisien 
-            et recevez des conseils personnalisés selon votre profil.
+            Calculez votre capacité d&apos;épargne en tenant compte du coût de
+            la vie parisien et recevez des conseils personnalisés selon votre
+            profil.
           </Paragraph>
-          
+
           {/* Guide Overview Section */}
           <GuideInfo section="overview" userProfile={userProfile} />
         </div>
 
         <Row gutter={[24, 24]} className="main-content">
           <Col xs={24} lg={12}>
-            <Card 
+            <Card
               title={
                 <span>
-                  <CalculatorOutlined /> Calculateur d'Épargne
+                  <CalculatorOutlined /> Calculateur d&apos;Épargne
                 </span>
               }
               className="calculator-card"
             >
-              <SavingsCalculator onCalculationComplete={handleCalculationComplete} />
+              <SavingsCalculator
+                onCalculationComplete={handleCalculationComplete}
+              />
             </Card>
           </Col>
 
           <Col xs={24} lg={12}>
             {calculationResults ? (
-              <ResultsDisplay 
-                results={calculationResults} 
+              <ResultsDisplay
+                results={calculationResults}
                 userProfile={userProfile}
               />
             ) : (
-              <Card 
+              <Card
                 title={
                   <span>
                     <InfoCircleOutlined /> Vos Résultats
@@ -89,41 +111,61 @@ function App() {
         {/* Guide Information Tabs Section */}
         <Row gutter={[24, 24]} className="guide-section">
           <Col xs={24}>
-            <Card 
+            <Card
               title={
                 <span>
-                  <BookOutlined /> Guide Complet d'Épargne à Paris
+                  <BookOutlined /> Guide Complet d&apos;Épargne à Paris
                 </span>
               }
               className="guide-card"
             >
               <Tabs defaultActiveKey="housing" centered>
-                <TabPane 
-                  tab={<span><HomeOutlined /> Logement</span>} 
+                <TabPane
+                  tab={
+                    <span>
+                      <HomeOutlined /> Logement
+                    </span>
+                  }
                   key="housing"
                 >
                   <GuideInfo section="housing" userProfile={userProfile} />
                 </TabPane>
-                <TabPane 
-                  tab={<span><CarOutlined /> Transport</span>} 
+                <TabPane
+                  tab={
+                    <span>
+                      <CarOutlined /> Transport
+                    </span>
+                  }
                   key="transport"
                 >
                   <GuideInfo section="transport" userProfile={userProfile} />
                 </TabPane>
-                <TabPane 
-                  tab={<span><ShoppingOutlined /> Alimentation</span>} 
+                <TabPane
+                  tab={
+                    <span>
+                      <ShoppingOutlined /> Alimentation
+                    </span>
+                  }
                   key="food"
                 >
                   <GuideInfo section="food" userProfile={userProfile} />
                 </TabPane>
-                <TabPane 
-                  tab={<span><BankOutlined /> Épargne</span>} 
+                <TabPane
+                  tab={
+                    <span>
+                      <BankOutlined /> Épargne
+                    </span>
+                  }
                   key="savings"
                 >
                   <GuideInfo section="savings" userProfile={userProfile} />
                 </TabPane>
-                <TabPane 
-                  tab={<span><WarningOutlined /> Erreurs à Éviter</span>} 
+                <TabPane
+                  tab={
+                    <span>
+                      <WarningOutlined /> Erreurs à Éviter
+                    </span>
+                  }
                   key="warnings"
                 >
                   <GuideInfo section="warnings" userProfile={userProfile} />
@@ -137,7 +179,7 @@ function App() {
 
         <Row gutter={[24, 24]} className="tips-section">
           <Col xs={24} lg={12}>
-            <Card 
+            <Card
               title={
                 <span>
                   <LineChartOutlined /> Données de Référence
@@ -149,7 +191,7 @@ function App() {
           </Col>
 
           <Col xs={24} lg={12}>
-            <Card 
+            <Card
               title={
                 <span>
                   <InfoCircleOutlined /> Conseils & Recommandations
@@ -157,7 +199,10 @@ function App() {
               }
               className="tips-section"
             >
-              <TipsAndAdvice userProfile={userProfile} results={calculationResults} />
+              <TipsAndAdvice
+                userProfile={userProfile}
+                results={calculationResults}
+              />
             </Card>
           </Col>
         </Row>
@@ -167,9 +212,13 @@ function App() {
             <Divider />
             <Row gutter={[24, 24]} className="full-width-section">
               <Col xs={24}>
-                <SavingsProjection 
+                <SavingsProjection
                   monthlySavings={calculationResults.disposableIncome}
-                  userAge={userProfile ? parseInt(userProfile.ageRange.split('-')[0]) : 30}
+                  userAge={
+                    userProfile
+                      ? parseInt(userProfile.ageRange.split("-")[0])
+                      : 30
+                  }
                 />
               </Col>
             </Row>
@@ -179,8 +228,9 @@ function App() {
 
       <Footer className="footer">
         <div className="footer-content">
-          <Paragraph style={{ color: 'rgba(255, 255, 255, 0.7)', margin: 0 }}>
-            © 2025 Calculateur d'Épargne Paris - Optimisez votre budget parisien
+          <Paragraph style={{ color: "rgba(255, 255, 255, 0.7)", margin: 0 }}>
+            © 2025 Calculateur d&apos;Épargne Paris - Optimisez votre budget
+            parisien
           </Paragraph>
         </div>
       </Footer>
