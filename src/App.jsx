@@ -30,6 +30,7 @@ import DataVisualization from "./components/DataVisualization";
 import SavingsProjection from "./components/SavingsProjection";
 import GuideInfo from "./components/GuideInfo";
 import MobileOptimizations from "./components/MobileOptimizations";
+import Sources from "./components/Sources";
 import "./App.css";
 
 const { Header, Content, Footer } = Layout;
@@ -39,6 +40,7 @@ function App() {
   const [calculationResults, setCalculationResults] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [legalModalVisible, setLegalModalVisible] = useState(false);
+  const [sourcesModalVisible, setSourcesModalVisible] = useState(false);
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
 
   useEffect(() => {
@@ -404,11 +406,50 @@ function App() {
                 fichier LEGAL.md du projet
               </Paragraph>
             </div>
+            
+            {/* Sources Link in Footer */}
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <Button 
+                type="link" 
+                icon={<BookOutlined />}
+                onClick={() => setSourcesModalVisible(true)}
+                style={{ 
+                  color: 'rgba(120, 219, 255, 0.8)', 
+                  fontSize: '12px',
+                  height: 'auto',
+                  padding: '4px 8px'
+                }}
+              >
+                📚 Consulter les sources et références
+              </Button>
+            </div>
           </div>
         </div>
       </Footer>
 
       <FloatButton.BackTop />
+      
+      {/* Sources Button */}
+      <FloatButton
+        icon={<BookOutlined />}
+        onClick={() => setSourcesModalVisible(true)}
+        style={{
+          bottom: 80,
+          right: 24,
+          background: 'rgba(10, 11, 13, 0.9)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(120, 219, 255, 0.3)',
+          color: '#78dbff',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
+        }}
+        className="sources-float-button"
+      />
+
+      {/* Sources Modal */}
+      <Sources 
+        visible={sourcesModalVisible}
+        onClose={() => setSourcesModalVisible(false)}
+      />
 
       {/* Legal Disclaimer Modal */}
       <Modal

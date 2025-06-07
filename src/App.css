@@ -1005,3 +1005,40 @@ body,
 .layout {
   min-height: calc(var(--vh, 1vh) * 100);
 }
+
+/* Sources button mobile optimization */
+.sources-float-button {
+  z-index: 999;
+  transition: all 0.3s ease !important;
+}
+
+.sources-float-button:hover {
+  background: rgba(120, 219, 255, 0.2) !important;
+  border-color: rgba(120, 219, 255, 0.6) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 20px rgba(120, 219, 255, 0.3) !important;
+}
+
+@media (max-width: 480px) {
+  .sources-float-button {
+    bottom: 70px !important;
+    right: 16px !important;
+    transform: scale(0.9);
+  }
+  
+  .sources-float-button:hover {
+    transform: scale(0.95) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .sources-float-button {
+    bottom: 65px !important;
+    right: 12px !important;
+    transform: scale(0.8);
+  }
+  
+  .sources-float-button:hover {
+    transform: scale(0.85) !important;
+  }
+}
