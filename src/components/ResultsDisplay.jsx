@@ -7,12 +7,19 @@ import {
   Alert,
   Typography,
   Space,
+  Tag,
+  Divider,
 } from "antd";
 import {
   DollarOutlined,
   RiseOutlined,
   WarningOutlined,
   CheckCircleOutlined,
+  HomeOutlined,
+  CarOutlined,
+  ShoppingOutlined,
+  MoreOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -29,6 +36,7 @@ const ResultsDisplay = ({ results }) => {
     savingsGap,
     annualSavingsPotential,
     canSave,
+    breakdown,
   } = results;
 
   const savingsRatePercentage = Math.round(actualSavingsRate * 100);
@@ -172,11 +180,7 @@ const ResultsDisplay = ({ results }) => {
             <div style={{ textAlign: "center" }}>
               <Title level={4} style={{ color: "#faad14" }}>
                 {Math.round(
-                  ((monthlySalary -
-                    totalExpenses -
-                    Math.max(0, disposableIncome)) /
-                    monthlySalary) *
-                    100
+                  (Math.max(0, disposableIncome) / monthlySalary) * 100
                 )}
                 %
               </Title>
@@ -185,6 +189,233 @@ const ResultsDisplay = ({ results }) => {
           </Col>
         </Row>
       </Card>
+
+      <Card
+        title="💡 Comprendre votre marge flexible"
+        style={{ marginBottom: 16 }}
+      >
+        <Alert
+          message={`Votre marge flexible : ${Math.max(
+            0,
+            disposableIncome
+          )}€/mois (${Math.round(
+            (Math.max(0, disposableIncome) / monthlySalary) * 100
+          )}%)`}
+          description={
+            <div>
+              <Text style={{ display: "block", marginBottom: 8 }}>
+                <strong>La marge flexible</strong> représente l&apos;argent
+                disponible chaque mois après avoir payé toutes vos dépenses
+                essentielles (logement, transport, alimentation, autres charges
+                fixes).
+              </Text>
+              <Text style={{ display: "block", marginBottom: 8 }}>
+                Cette somme peut être utilisée pour :
+              </Text>
+              <ul style={{ marginLeft: 16, marginBottom: 8 }}>
+                <li>
+                  🎯 <strong>Épargne</strong> pour vos projets futurs
+                </li>
+                <li>
+                  🎉 <strong>Loisirs et sorties</strong> (restaurants, cinéma,
+                  vacances)
+                </li>
+                <li>
+                  🛍️ <strong>Achats plaisir</strong> (vêtements, gadgets)
+                </li>
+                <li>
+                  🚨 <strong>Imprévus</strong> (réparations, frais médicaux)
+                </li>
+                <li>
+                  🎁 <strong>Cadeaux et voyages</strong>
+                </li>
+              </ul>
+              <Text
+                strong
+                style={{
+                  color:
+                    canSave && disposableIncome > 200
+                      ? "#52c41a"
+                      : disposableIncome > 0
+                      ? "#faad14"
+                      : "#ff4d4f",
+                }}
+              >
+                {canSave && disposableIncome > 200
+                  ? "✅ Excellente marge ! Vous pouvez épargner ET vous faire plaisir."
+                  : disposableIncome > 0
+                  ? "⚠️ Marge correcte, mais attention aux dépenses impulsives."
+                  : "🚨 Aucune marge flexible - révisez votre budget en priorité."}
+              </Text>
+            </div>
+          }
+          type={
+            canSave && disposableIncome > 200
+              ? "success"
+              : disposableIncome > 0
+              ? "warning"
+              : "error"
+          }
+          showIcon
+        />
+      </Card>
+
+      {breakdown && (
+        <Card
+          title={
+            <span>
+              <InfoCircleOutlined style={{ marginRight: 8 }} />
+              Détail de vos dépenses mensuelles
+            </span>
+          }
+        >
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} md={6}>
+              <Card
+                size="small"
+                style={{
+                  backgroundColor: "#fff1f0",
+                  border: "1px solid #ffccc7",
+                }}
+              >
+                <Statistic
+                  title={
+                    <span>
+                      <HomeOutlined /> Logement
+                      {breakdown.isOwner && (
+                        <Tag color="blue" style={{ marginLeft: 8 }}>
+                          Propriétaire
+                        </Tag>
+                      )}
+                    </span>
+                  }
+                  value={breakdown.housingCost}
+                  suffix="€"
+                  valueStyle={{ color: "#cf1322", fontSize: "18px" }}
+                />
+                {breakdown.isOwner && breakdown.housingDetails && (
+                  <div
+                    style={{ marginTop: 8, fontSize: "12px", color: "#666" }}
+                  >
+                    <div>
+                      Loyer équivalent:{" "}
+                      {breakdown.housingDetails.equivalentRent}€
+                    </div>
+                    <div>
+                      × 70% ={" "}
+                      {Math.round(
+                        breakdown.housingDetails.equivalentRent * 0.7
+                      )}
+                      €
+                    </div>
+                    <div>+ Charges: {breakdown.housingDetails.charges}€</div>
+                    <div>
+                      + Assurance: {breakdown.housingDetails.insurance}€
+                    </div>
+                  </div>
+                )}
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} md={6}>
+              <Card
+                size="small"
+                style={{
+                  backgroundColor: "#f6ffed",
+                  border: "1px solid #b7eb8f",
+                }}
+              >
+                <Statistic
+                  title={
+                    <span>
+                      <CarOutlined /> Transport
+                    </span>
+                  }
+                  value={breakdown.transportCost}
+                  suffix="€"
+                  valueStyle={{ color: "#52c41a", fontSize: "18px" }}
+                />
+                <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
+                  Pass Navigo mensuel
+                </div>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} md={6}>
+              <Card
+                size="small"
+                style={{
+                  backgroundColor: "#fff7e6",
+                  border: "1px solid #ffd591",
+                }}
+              >
+                <Statistic
+                  title={
+                    <span>
+                      <ShoppingOutlined /> Alimentation
+                    </span>
+                  }
+                  value={breakdown.foodCost}
+                  suffix="€"
+                  valueStyle={{ color: "#fa8c16", fontSize: "18px" }}
+                />
+                <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
+                  Base 350€ + personnes à charge
+                </div>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} md={6}>
+              <Card
+                size="small"
+                style={{
+                  backgroundColor: "#f9f0ff",
+                  border: "1px solid #d3adf7",
+                }}
+              >
+                <Statistic
+                  title={
+                    <span>
+                      <MoreOutlined /> Autres dépenses
+                    </span>
+                  }
+                  value={breakdown.additionalExpenses}
+                  suffix="€"
+                  valueStyle={{ color: "#722ed1", fontSize: "18px" }}
+                />
+                <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
+                  Loisirs, assurances, etc.
+                </div>
+              </Card>
+            </Col>
+          </Row>
+
+          <Divider />
+
+          <Row justify="center">
+            <Col>
+              <Card
+                size="small"
+                style={{
+                  backgroundColor: "#f0f5ff",
+                  border: "2px solid #597ef7",
+                }}
+              >
+                <Statistic
+                  title="Total des dépenses"
+                  value={totalExpenses}
+                  suffix="€"
+                  valueStyle={{
+                    color: "#1d39c4",
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                  }}
+                />
+              </Card>
+            </Col>
+          </Row>
+        </Card>
+      )}
     </Space>
   );
 };

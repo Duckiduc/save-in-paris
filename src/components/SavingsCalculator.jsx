@@ -69,11 +69,58 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
     const transportCost = location === "paris-intra" ? 84 : 88.8;
     const foodCost = 350 + dependents * 200; // Base + par personne supplémentaire
 
+    // Données de référence pour les calculs de logement
+    const equivalentRents = {
+      "paris-intra": {
+        studio: 800, // Moyenne des arrondissements parisiens
+        t2: 1450,
+        t3: 2150,
+        t4: 2850,
+      },
+      "petite-couronne": {
+        studio: 650, // Moyenne proche banlieue
+        t2: 950,
+        t3: 1400,
+        t4: 1850,
+      },
+      "grande-couronne": {
+        studio: 500, // Moyenne grande couronne
+        t2: 750,
+        t3: 1100,
+        t4: 1450,
+      },
+    };
+
+    const charges = {
+      studio: 40,
+      t2: 60,
+      t3: 80,
+      t4: 100,
+    };
+
+    const assurance = {
+      studio: 12,
+      t2: 15,
+      t3: 18,
+      t4: 20,
+    };
+
+    // Coûts de logement réalistes pour les propriétaires
+    let housingCost;
+    if (isOwner) {
+      // Coûts propriétaire basés sur 70% du loyer équivalent + charges + assurance
+      const equivalentRent = equivalentRents[location]?.[housingType] || 800;
+      const monthlyCharges = charges[housingType] || 60;
+      const monthlyInsurance = assurance[housingType] || 15;
+
+      // Coût propriétaire = 70% du loyer équivalent + charges + assurance
+      housingCost = equivalentRent * 0.7 + monthlyCharges + monthlyInsurance;
+    } else {
+      housingCost = rent;
+    }
+
     const totalExpenses =
-      (isOwner ? 0 : rent) +
-      transportCost +
-      foodCost +
-      (additionalExpenses || 0);
+      housingCost + transportCost + foodCost + (additionalExpenses || 0);
     const disposableIncome = salary - totalExpenses;
 
     // Recommandations selon l'âge
@@ -99,6 +146,22 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
       savingsGap: recommendedMonthlySavings - Math.max(0, disposableIncome),
       annualSavingsPotential: Math.max(0, disposableIncome) * 12,
       canSave: disposableIncome > 0,
+      // Détail des calculs pour affichage
+      breakdown: {
+        housingCost: Math.round(housingCost),
+        transportCost: Math.round(transportCost),
+        foodCost: Math.round(foodCost),
+        additionalExpenses: additionalExpenses || 0,
+        isOwner,
+        housingDetails: isOwner
+          ? {
+              equivalentRent: equivalentRents[location]?.[housingType] || 800,
+              ownershipFactor: 0.7,
+              charges: charges[housingType] || 60,
+              insurance: assurance[housingType] || 15,
+            }
+          : null,
+      },
     };
 
     const profile = {
@@ -156,6 +219,11 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
                   <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
                     • <strong>Alimentation :</strong> 350€/mois + 200€ par
                     personne à charge
+                  </Paragraph>
+                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
+                    • <strong>Logement :</strong> Loyer pour locataires, ou pour
+                    propriétaires : 70% du loyer équivalent + charges
+                    copropriété + assurance habitation
                   </Paragraph>
                   <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
                     • <strong>Taux d&apos;épargne recommandé par âge :</strong>
@@ -360,7 +428,7 @@ const SavingsCalculator = ({ onCalculationComplete }) => {
                 >
                   Êtes-vous propriétaire ?
                   <Tooltip
-                    title="Indiquez si vous possédez votre logement. Cela impacte le calcul du loyer et des dépenses."
+                    title="Si vous êtes propriétaire, nous calculons vos coûts de logement réels : 70% du loyer équivalent de votre zone + charges de copropriété + assurance habitation."
                     placement="top"
                   >
                     <InfoCircleOutlined

@@ -6,7 +6,7 @@ import {
   Row,
   Col,
   Divider,
-  BackTop,
+  FloatButton,
   Tabs,
 } from "antd";
 import {
@@ -30,7 +30,6 @@ import "./App.css";
 
 const { Header, Content, Footer } = Layout;
 const { Title, Paragraph } = Typography;
-const { TabPane } = Tabs;
 
 function App() {
   const [calculationResults, setCalculationResults] = useState(null);
@@ -40,6 +39,55 @@ function App() {
     setCalculationResults(results);
     setUserProfile(profile);
   };
+
+  // Define tabs items for the modern Tabs API
+  const tabItems = [
+    {
+      key: "housing",
+      label: (
+        <span>
+          <HomeOutlined /> Logement
+        </span>
+      ),
+      children: <GuideInfo section="housing" userProfile={userProfile} />,
+    },
+    {
+      key: "transport",
+      label: (
+        <span>
+          <CarOutlined /> Transport
+        </span>
+      ),
+      children: <GuideInfo section="transport" userProfile={userProfile} />,
+    },
+    {
+      key: "food",
+      label: (
+        <span>
+          <ShoppingOutlined /> Alimentation
+        </span>
+      ),
+      children: <GuideInfo section="food" userProfile={userProfile} />,
+    },
+    {
+      key: "savings",
+      label: (
+        <span>
+          <BankOutlined /> Épargne
+        </span>
+      ),
+      children: <GuideInfo section="savings" userProfile={userProfile} />,
+    },
+    {
+      key: "warnings",
+      label: (
+        <span>
+          <WarningOutlined /> Erreurs à Éviter
+        </span>
+      ),
+      children: <GuideInfo section="warnings" userProfile={userProfile} />,
+    },
+  ];
 
   return (
     <Layout className="layout">
@@ -119,58 +167,7 @@ function App() {
               }
               className="guide-card"
             >
-              <Tabs defaultActiveKey="housing" centered>
-                <TabPane
-                  tab={
-                    <span>
-                      <HomeOutlined /> Logement
-                    </span>
-                  }
-                  key="housing"
-                >
-                  <GuideInfo section="housing" userProfile={userProfile} />
-                </TabPane>
-                <TabPane
-                  tab={
-                    <span>
-                      <CarOutlined /> Transport
-                    </span>
-                  }
-                  key="transport"
-                >
-                  <GuideInfo section="transport" userProfile={userProfile} />
-                </TabPane>
-                <TabPane
-                  tab={
-                    <span>
-                      <ShoppingOutlined /> Alimentation
-                    </span>
-                  }
-                  key="food"
-                >
-                  <GuideInfo section="food" userProfile={userProfile} />
-                </TabPane>
-                <TabPane
-                  tab={
-                    <span>
-                      <BankOutlined /> Épargne
-                    </span>
-                  }
-                  key="savings"
-                >
-                  <GuideInfo section="savings" userProfile={userProfile} />
-                </TabPane>
-                <TabPane
-                  tab={
-                    <span>
-                      <WarningOutlined /> Erreurs à Éviter
-                    </span>
-                  }
-                  key="warnings"
-                >
-                  <GuideInfo section="warnings" userProfile={userProfile} />
-                </TabPane>
-              </Tabs>
+              <Tabs defaultActiveKey="housing" centered items={tabItems} />
             </Card>
           </Col>
         </Row>
@@ -235,7 +232,7 @@ function App() {
         </div>
       </Footer>
 
-      <BackTop />
+      <FloatButton.BackTop />
     </Layout>
   );
 }
