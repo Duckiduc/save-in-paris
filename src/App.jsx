@@ -29,6 +29,7 @@ import TipsAndAdvice from "./components/TipsAndAdvice";
 import DataVisualization from "./components/DataVisualization";
 import SavingsProjection from "./components/SavingsProjection";
 import GuideInfo from "./components/GuideInfo";
+import MobileOptimizations from "./components/MobileOptimizations";
 import "./App.css";
 
 const { Header, Content, Footer } = Layout;
@@ -111,6 +112,8 @@ function App() {
 
   return (
     <Layout className="layout">
+      <MobileOptimizations />
+      
       <Header className="header">
         <div className="header-content">
           <CalculatorOutlined className="logo-icon" />
@@ -127,8 +130,7 @@ function App() {
           </Title>
           <Paragraph className="hero-description">
             Calculez votre capacité d&apos;épargne en tenant compte du coût de
-            la vie parisien et recevez des conseils personnalisés selon votre
-            profil.
+            la vie parisien.
           </Paragraph>
 
           {/* Guide Overview Section */}
@@ -167,7 +169,7 @@ function App() {
                 className="results-placeholder"
               >
                 <Paragraph className="placeholder-text">
-                  Remplissez le formulaire pour voir vos résultats personnalisés
+                  Remplissez le formulaire
                 </Paragraph>
               </Card>
             )}

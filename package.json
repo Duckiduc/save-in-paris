@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Calculateur d'épargne personnalisé pour Paris et région parisienne - Usage informatif uniquement",
+  "description": "Calculateur d'épargne pour Paris et région parisienne - Usage informatif uniquement",
   "author": "Calculateur d'Épargne Paris Contributors",
   "license": "MIT",
   "keywords": [

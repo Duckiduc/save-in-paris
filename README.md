@@ -4,9 +4,8 @@ Une application web moderne pour calculer et optimiser votre épargne à Paris e
 
 ## 🚀 Fonctionnalités
 
-- **Calculateur personnalisé** : Calcul précis selon votre profil (âge, zone, situation)
+- **Calculateur** : Calcul selon votre profil (âge, zone, situation)
 - **Visualisations de données** : Graphiques interactifs basés sur des données réelles
-- **Conseils personnalisés** : Recommandations adaptées à votre tranche d'âge et situation
 - **Interface moderne** : Design minimaliste et responsive avec Ant Design
 - **Données réelles** : Basé sur les statistiques officielles du coût de la vie parisien
 
@@ -29,7 +28,6 @@ Une application web moderne pour calculer et optimiser votre épargne à Paris e
 1. Remplissez vos informations personnelles (salaire, âge, zone)
 2. Indiquez votre situation de logement (propriétaire/locataire)
 3. Ajoutez vos dépenses additionnelles
-4. Obtenez vos résultats personnalisés et conseils
 
 ## 💡 Conseils intégrés
 
@@ -54,7 +52,7 @@ src/
 ├── components/
 │   ├── SavingsCalculator.jsx    # Formulaire de calcul
 │   ├── ResultsDisplay.jsx       # Affichage des résultats
-│   ├── TipsAndAdvice.jsx       # Conseils personnalisés
+│   ├── TipsAndAdvice.jsx
 │   └── DataVisualization.jsx   # Graphiques et données
 ├── data/                       # Données CSV et guides
 └── App.jsx                     # Composant principal
