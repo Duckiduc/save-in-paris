@@ -67,6 +67,73 @@ src/
 - Répartition budgétaire optimale
 - Comparaison avec les moyennes par âge
 
+## ⚠️ AVIS LÉGAL ET LIMITATION DE RESPONSABILITÉ
+
+### 🔓 Projet Open Source
+
+Ce projet est distribué sous licence open source et fourni **"EN L'ÉTAT"** sans aucune garantie expresse ou implicite. Le code source est public et peut être modifié par des tiers.
+
+### 📋 Usage Informatif Uniquement
+
+- Les calculs, estimations et conseils fournis sont **exclusivement à des fins éducatives et informatives**
+- Ils **NE CONSTITUENT PAS** des conseils financiers, juridiques, fiscaux ou d'investissement personnalisés
+- **AUCUNE GARANTIE** n'est donnée quant à l'exactitude, la fiabilité ou l'exhaustivité des informations
+
+### 🚫 Exclusion de Responsabilité
+
+L'auteur, les contributeurs et hébergeurs **DÉCLINENT TOUTE RESPONSABILITÉ** pour :
+
+- Les pertes financières directes ou indirectes
+- Les dommages résultant de l'utilisation de ce calculateur
+- Les erreurs dans les calculs ou données
+- Les décisions prises sur la base des résultats fournis
+
+### 📊 Limitations des Données
+
+- Les données proviennent de sources publiques et peuvent être inexactes ou obsolètes
+- Les résultats sont des estimations approximatives
+- Votre situation personnelle peut différer significativement des moyennes utilisées
+- **AUCUNE GARANTIE** de résultat financier futur n'est donnée
+
+### 💼 Conseil Professionnel Recommandé
+
+**CONSULTEZ TOUJOURS** un professionnel agréé avant toute décision financière :
+
+- Conseiller en gestion de patrimoine certifié
+- Expert-comptable
+- Notaire
+- Conseiller bancaire qualifié
+
+### ✅ Acceptation des Conditions
+
+En utilisant ce logiciel, vous acceptez ces conditions et reconnaissez :
+
+- Avoir été informé(e) de ces limitations
+- Comprendre les risques associés
+- Utiliser cet outil à vos propres risques
+- Décharger les créateurs de toute responsabilité
+
+### 🛡️ Limitations Supplémentaires
+
+- **Sécurité :** Aucune garantie de sécurité des données ou de disponibilité du service
+- **Compatibilité :** Aucune garantie de fonctionnement sur tous les appareils ou navigateurs
+- **Maintenance :** Le projet peut être abandonné ou modifié sans préavis
+- **Juridiction :** En cas de litige, seuls les tribunaux français sont compétents
+
+### 📝 Clause de Non-Responsabilité Étendue
+
+**AVERTISSEMENT MAXIMUM :** Cette application est fournie **SANS AUCUNE GARANTIE** de quelque nature que ce soit.
+L'utilisation de cet outil est **ENTIÈREMENT À VOS RISQUES ET PÉRILS**. Les créateurs ne peuvent être tenus
+responsables de QUELQUE MANIÈRE QUE CE SOIT pour les conséquences de son utilisation.
+
+### 🚨 Mise en Garde Finale
+
+**SI VOUS N'ACCEPTEZ PAS CES CONDITIONS DANS LEUR INTÉGRALITÉ, CESSEZ IMMÉDIATEMENT D'UTILISER CE SERVICE.**
+
+📋 **CONDITIONS COMPLÈTES :** Consultez le fichier [LEGAL.md](./LEGAL.md) pour les conditions d'utilisation détaillées et complètes.
+
+---
+
 Développé avec ❤️ pour optimiser votre budget parisien.+ Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

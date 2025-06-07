@@ -1,0 +1,31 @@
+================================================================================
+                    AVERTISSEMENT LÉGAL - CALCULATEUR D'ÉPARGNE PARIS
+================================================================================
+
+⚠️  ATTENTION - UTILISATION À VOS RISQUES ET PÉRILS ⚠️
+
+Ce logiciel est fourni "EN L'ÉTAT" sans aucune garantie. L'utilisation de ce
+calculateur d'épargne est ENTIÈREMENT À VOS RISQUES ET PÉRILS.
+
+🚫 EXCLUSION TOTALE DE RESPONSABILITÉ
+Les créateurs DÉCLINENT TOUTE RESPONSABILITÉ pour :
+- Pertes financières de toute nature
+- Erreurs de calcul ou données inexactes  
+- Décisions prises basées sur ces résultats
+- Dommages directs ou indirects
+
+📋 USAGE INFORMATIF UNIQUEMENT
+- NE constitue PAS un conseil financier professionnel
+- NE remplace PAS un conseiller qualifié
+- Estimations approximatives uniquement
+- Consultez TOUJOURS un professionnel avant toute décision
+
+✅ CONDITIONS D'ACCEPTATION
+En utilisant ce logiciel, vous acceptez intégralement ces limitations
+et renoncez à tout recours contre les créateurs.
+
+📄 Conditions complètes : voir fichiers LEGAL.md et README.md
+
+================================================================================
+SI VOUS N'ACCEPTEZ PAS CES CONDITIONS, CESSEZ IMMÉDIATEMENT L'UTILISATION
+================================================================================

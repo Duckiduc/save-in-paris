@@ -1,8 +1,20 @@
 {
   "name": "savings-calculator-paris",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Calculateur d'épargne personnalisé pour Paris et région parisienne - Usage informatif uniquement",
+  "author": "Calculateur d'Épargne Paris Contributors",
+  "license": "MIT",
+  "keywords": [
+    "épargne",
+    "paris",
+    "calculateur",
+    "finance",
+    "budget",
+    "éducatif"
+  ],
+  "disclaimer": "AVERTISSEMENT: Ce logiciel est fourni 'EN L'ÉTAT' sans garantie. Usage informatif uniquement. Consultez un professionnel avant toute décision financière.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

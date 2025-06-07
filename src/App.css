@@ -260,6 +260,12 @@
   margin-top: 64px;
 }
 
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
 /* Animations */
 @keyframes rotate {
   from {
@@ -635,4 +641,46 @@ body,
   .ant-card {
     border-radius: 16px !important;
   }
+}
+
+/* Styles pour le modal d'avertissement légal */
+.ant-modal .ant-modal-content {
+  background: white !important;
+  color: #262626 !important;
+}
+
+.ant-modal .ant-modal-header {
+  background: white !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.ant-modal .ant-modal-title {
+  color: #d32f2f !important;
+  font-weight: bold !important;
+}
+
+.ant-modal .ant-modal-body {
+  color: #262626 !important;
+}
+
+.ant-modal .ant-modal-body p,
+.ant-modal .ant-modal-body div,
+.ant-modal .ant-modal-body span,
+.ant-modal .ant-modal-body strong,
+.ant-modal .ant-modal-body ul li,
+.ant-modal .ant-modal-body .ant-typography,
+.ant-modal .ant-modal-body .ant-typography p,
+.ant-modal .ant-modal-body * {
+  color: #262626 !important;
+}
+
+.ant-modal .ant-modal-footer {
+  background: white !important;
+  border-top: 1px solid #f0f0f0 !important;
+}
+
+.ant-modal .ant-modal-footer .ant-btn-primary {
+  background: #d32f2f !important;
+  border-color: #d32f2f !important;
+  color: white !important;
 }
