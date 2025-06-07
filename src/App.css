@@ -592,6 +592,11 @@ body,
   color: rgba(255, 255, 255, 0.9) !important;
 }
 
+/* Profile text override for DataVisualization component */
+.ant-card-body p.profile-text {
+  color: black !important;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .hero-title {

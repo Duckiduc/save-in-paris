@@ -201,7 +201,7 @@ const DataVisualization = ({ userProfile }) => {
             borderRadius: 6,
           }}
         >
-          <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+          <p className="profile-text" style={{ margin: 0, fontSize: "14px" }}>
             💡 <strong>Votre profil :</strong> {userProfile.ageRange} ans,{" "}
             {userProfile.location === "paris-intra"
               ? "Paris intra-muros"
