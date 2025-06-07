@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Layout, Typography, Card, Row, Col, Divider, BackTop } from 'antd';
-import { CalculatorOutlined, InfoCircleOutlined, LineChartOutlined, RiseOutlined } from '@ant-design/icons';
+import { Layout, Typography, Card, Row, Col, Divider, BackTop, Tabs } from 'antd';
+import { CalculatorOutlined, InfoCircleOutlined, LineChartOutlined, RiseOutlined, BookOutlined, HomeOutlined, CarOutlined, ShoppingOutlined, BankOutlined, WarningOutlined } from '@ant-design/icons';
 import SavingsCalculator from './components/SavingsCalculator';
 import ResultsDisplay from './components/ResultsDisplay';
 import TipsAndAdvice from './components/TipsAndAdvice';
 import DataVisualization from './components/DataVisualization';
 import SavingsProjection from './components/SavingsProjection';
+import GuideInfo from './components/GuideInfo';
 import './App.css';
 
 const { Header, Content, Footer } = Layout;
 const { Title, Paragraph } = Typography;
+const { TabPane } = Tabs;
 
 function App() {
   const [calculationResults, setCalculationResults] = useState(null);
@@ -40,6 +42,9 @@ function App() {
             Calculez votre capacité d'épargne en tenant compte du coût de la vie parisien 
             et recevez des conseils personnalisés selon votre profil.
           </Paragraph>
+          
+          {/* Guide Overview Section */}
+          <GuideInfo section="overview" userProfile={userProfile} />
         </div>
 
         <Row gutter={[24, 24]} className="main-content">
@@ -76,6 +81,55 @@ function App() {
                 </Paragraph>
               </Card>
             )}
+          </Col>
+        </Row>
+
+        <Divider />
+
+        {/* Guide Information Tabs Section */}
+        <Row gutter={[24, 24]} className="guide-section">
+          <Col xs={24}>
+            <Card 
+              title={
+                <span>
+                  <BookOutlined /> Guide Complet d'Épargne à Paris
+                </span>
+              }
+              className="guide-card"
+            >
+              <Tabs defaultActiveKey="housing" centered>
+                <TabPane 
+                  tab={<span><HomeOutlined /> Logement</span>} 
+                  key="housing"
+                >
+                  <GuideInfo section="housing" userProfile={userProfile} />
+                </TabPane>
+                <TabPane 
+                  tab={<span><CarOutlined /> Transport</span>} 
+                  key="transport"
+                >
+                  <GuideInfo section="transport" userProfile={userProfile} />
+                </TabPane>
+                <TabPane 
+                  tab={<span><ShoppingOutlined /> Alimentation</span>} 
+                  key="food"
+                >
+                  <GuideInfo section="food" userProfile={userProfile} />
+                </TabPane>
+                <TabPane 
+                  tab={<span><BankOutlined /> Épargne</span>} 
+                  key="savings"
+                >
+                  <GuideInfo section="savings" userProfile={userProfile} />
+                </TabPane>
+                <TabPane 
+                  tab={<span><WarningOutlined /> Erreurs à Éviter</span>} 
+                  key="warnings"
+                >
+                  <GuideInfo section="warnings" userProfile={userProfile} />
+                </TabPane>
+              </Tabs>
+            </Card>
           </Col>
         </Row>
 
