@@ -21,6 +21,7 @@ import {
   MoreOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
+import { formatCurrency } from "../utils/financialUtils";
 
 const { Title, Text } = Typography;
 
@@ -81,7 +82,7 @@ const ResultsDisplay = ({ results }) => {
             <Statistic
               title="Revenus mensuels"
               value={monthlySalary}
-              suffix="€"
+              formatter={(value) => formatCurrency(value)}
               prefix={<DollarOutlined />}
             />
           </Col>
@@ -89,7 +90,7 @@ const ResultsDisplay = ({ results }) => {
             <Statistic
               title="Dépenses totales"
               value={totalExpenses}
-              suffix="€"
+              formatter={(value) => formatCurrency(value)}
               valueStyle={{ color: "#cf1322" }}
             />
           </Col>
@@ -100,7 +101,7 @@ const ResultsDisplay = ({ results }) => {
             <Statistic
               title="Épargne mensuelle possible"
               value={Math.max(0, disposableIncome)}
-              suffix="€"
+              formatter={(value) => formatCurrency(value)}
               valueStyle={{ color: canSave ? "#3f8600" : "#cf1322" }}
               prefix={canSave ? <CheckCircleOutlined /> : <WarningOutlined />}
             />
@@ -109,7 +110,7 @@ const ResultsDisplay = ({ results }) => {
             <Statistic
               title="Épargne annuelle potentielle"
               value={Math.max(0, annualSavingsPotential)}
-              suffix="€"
+              formatter={(value) => formatCurrency(value)}
               prefix={<RiseOutlined />}
               valueStyle={{ color: "#3f8600" }}
             />
@@ -145,9 +146,9 @@ const ResultsDisplay = ({ results }) => {
 
           {savingsGap > 0 && (
             <Alert
-              message={`Pour atteindre l'objectif, vous devriez économiser ${Math.round(
+              message={`Pour atteindre l'objectif, vous devriez économiser ${formatCurrency(
                 savingsGap
-              )}€ de plus par mois`}
+              )} de plus par mois`}
               type="info"
               showIcon
             />
@@ -195,10 +196,9 @@ const ResultsDisplay = ({ results }) => {
         style={{ marginBottom: 16 }}
       >
         <Alert
-          message={`Votre marge flexible : ${Math.max(
-            0,
-            disposableIncome
-          )}€/mois (${Math.round(
+          message={`Votre marge flexible : ${formatCurrency(
+            Math.max(0, disposableIncome)
+          )}/mois (${Math.round(
             (Math.max(0, disposableIncome) / monthlySalary) * 100
           )}%)`}
           description={
@@ -290,7 +290,7 @@ const ResultsDisplay = ({ results }) => {
                     </span>
                   }
                   value={breakdown.housingCost}
-                  suffix="€"
+                  formatter={(value) => formatCurrency(value)}
                   valueStyle={{ color: "#cf1322", fontSize: "18px" }}
                 />
                 {breakdown.isOwner && breakdown.housingDetails && (
@@ -299,18 +299,23 @@ const ResultsDisplay = ({ results }) => {
                   >
                     <div>
                       Loyer équivalent:{" "}
-                      {breakdown.housingDetails.equivalentRent}€
+                      {formatCurrency(breakdown.housingDetails.equivalentRent)}
                     </div>
                     <div>
                       × 70% ={" "}
-                      {Math.round(
-                        breakdown.housingDetails.equivalentRent * 0.7
+                      {formatCurrency(
+                        Math.round(
+                          breakdown.housingDetails.equivalentRent * 0.7
+                        )
                       )}
-                      €
                     </div>
-                    <div>+ Charges: {breakdown.housingDetails.charges}€</div>
                     <div>
-                      + Assurance: {breakdown.housingDetails.insurance}€
+                      + Charges:{" "}
+                      {formatCurrency(breakdown.housingDetails.charges)}
+                    </div>
+                    <div>
+                      + Assurance:{" "}
+                      {formatCurrency(breakdown.housingDetails.insurance)}
                     </div>
                   </div>
                 )}
@@ -332,7 +337,7 @@ const ResultsDisplay = ({ results }) => {
                     </span>
                   }
                   value={breakdown.transportCost}
-                  suffix="€"
+                  formatter={(value) => formatCurrency(value)}
                   valueStyle={{ color: "#52c41a", fontSize: "18px" }}
                 />
                 <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
@@ -356,7 +361,7 @@ const ResultsDisplay = ({ results }) => {
                     </span>
                   }
                   value={breakdown.foodCost}
-                  suffix="€"
+                  formatter={(value) => formatCurrency(value)}
                   valueStyle={{ color: "#fa8c16", fontSize: "18px" }}
                 />
                 <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
@@ -380,7 +385,7 @@ const ResultsDisplay = ({ results }) => {
                     </span>
                   }
                   value={breakdown.additionalExpenses}
-                  suffix="€"
+                  formatter={(value) => formatCurrency(value)}
                   valueStyle={{ color: "#722ed1", fontSize: "18px" }}
                 />
                 <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
@@ -404,7 +409,7 @@ const ResultsDisplay = ({ results }) => {
                 <Statistic
                   title="Total des dépenses"
                   value={totalExpenses}
-                  suffix="€"
+                  formatter={(value) => formatCurrency(value)}
                   valueStyle={{
                     color: "#1d39c4",
                     fontSize: "20px",
