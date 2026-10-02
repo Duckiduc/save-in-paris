@@ -18,23 +18,25 @@ La règle 50/30/20 adaptée à Paris :
 
 #### Logement
 
-- **Studio Paris intra-muros** : 600€ à 1400€/mois selon l'arrondissement
-- **T2 Paris** : 1280€ à 1628€/mois
+- **Studio Paris intra-muros** : environ 730€/mois hors charges en moyenne (30,4 €/m², OLAP janvier 2025), 775€ pour un nouvel emménagement
+- **T2 Paris** : environ 1 120€/mois hors charges en moyenne (26,7 €/m²), 1 170€ pour un nouvel emménagement
+- **Petite couronne** : 19,1 €/m² en moyenne ; **grande couronne** : 15,6 €/m²
 - **Charges moyennes** : 40€ à 120€/mois selon la taille
 - **Assurance habitation** : 12€ à 25€/mois
 
 #### Transport
 
-- **Pass Navigo mensuel toutes zones** : 88,80€
-- **Pass Navigo zones 1-3** : 82,80€
+- **Pass Navigo mensuel toutes zones** : 90,80€
+- **Pass Navigo zones 2-3** : 88,80€
 - **Forfait employeur** : remboursement 50% minimum
 - **Alternative vélo** : 30€ à 50€/mois
 
 #### Alimentation
 
-- **Personne seule** : 350€/mois en moyenne
-- **Couple** : 600€/mois
-- **Famille de 4** : 1000€/mois
+- **Personne seule** : 350€/mois (hypothèse de l'application)
+- **Couple** : 600€/mois (hypothèse)
+- **Famille de 4** : 1000€/mois (hypothèse)
+- Il n'existe pas de montant officiel : l'INSEE indique seulement que l'alimentation représente 14% du budget des ménages de l'agglomération parisienne (2017)
 
 ## 🏠 Optimiser son Budget Logement
 
@@ -42,14 +44,14 @@ La règle 50/30/20 adaptée à Paris :
 
 #### Arrondissements les Plus Abordables
 
-1. **10e arrondissement** : studios dès 390€
+1. **10e arrondissement** : petites surfaces
 2. **19e arrondissement** : excellent rapport qualité/prix
 3. **20e arrondissement** : quartiers en développement
 4. **12e arrondissement** : résidentiel et accessible
 
 #### Alternatives en Proche Banlieue
 
-- **Montreuil** : -40% par rapport à Paris intra-muros
+- **Montreuil** : loyers de petite couronne, en moyenne -27% au m² par rapport à Paris (OLAP)
 - **Saint-Denis** : logements très abordables
 - **Pantin** : quartiers créatifs en expansion
 - **Aubervilliers** : excellente connexion transport
@@ -117,9 +119,9 @@ La règle 50/30/20 adaptée à Paris :
 
 ### Produits d'Épargne Recommandés
 
-1. **Livret A** : 2,4% - épargne de précaution
-2. **LDDS** : 2,4% - complément du Livret A
-3. **LEP** : 3,5% - si éligible (revenus modestes)
+1. **Livret A** : 1,7% - épargne de précaution
+2. **LDDS** : 1,7% - complément du Livret A
+3. **LEP** : 2,5% - si éligible (revenus modestes)
 4. **Assurance-vie** : investissement moyen/long terme
 5. **PEA** : actions françaises et européennes
 
@@ -134,9 +136,11 @@ La règle 50/30/20 adaptée à Paris :
 
 ### Faisabilité d'Achat
 
-- **Apport nécessaire** : 20% minimum du prix d'achat
-- **Capacité d'endettement** : 35% des revenus nets maximum
-- **Frais annexes** : 8% à 10% du prix d'achat
+- **Prix au m²** : 9 570€ à Paris, 4 910€ en petite couronne, 3 190€ en grande couronne (Notaires du Grand Paris, janvier 2026)
+- **Apport** : au moins les frais d'acquisition, idéalement 10% du prix en plus
+- **Capacité d'endettement** : 35% des revenus nets maximum, sur 25 ans maximum (HCSF)
+- **Frais d'acquisition** : proches de 8% du prix dans l'ancien, environ 7,5% pour un premier achat
+- **Taux de crédit** : 3,30% en moyenne en juillet 2026 (Banque de France)
 
 ### Zones d'Investissement Prometteuses
 
@@ -145,20 +149,22 @@ La règle 50/30/20 adaptée à Paris :
 - **Première couronne** : Montreuil, Pantin, Saint-Denis
 - **Quartiers en rénovation** : projets urbains en développement
 
-## 📈 Données de Référence 2025
+## 📈 Données de Référence 2026
 
 ### Salaires Moyens à Paris
 
-- **Cadres** : 6 044€ nets/mois
-- **Professions intermédiaires** : 3 210€ nets/mois
-- **Employés** : 2 042€ nets/mois
-- **Moyenne générale** : 4 313€ nets/mois
+Salaire net mensuel moyen en équivalent temps plein, secteur privé (INSEE, 2024) :
+
+- **Cadres** : 5 663€ nets/mois
+- **Professions intermédiaires** : 2 842€ nets/mois
+- **Employés** : 2 112€ nets/mois
+- **Moyenne générale** : 3 836€ nets/mois (Île-de-France : 3 479€ ; France : 2 733€)
 
 ### Comparaisons Nationales
 
-- **Taux d'épargne français** : 18% du revenu disponible
-- **Épargne moyenne mensuelle** : 260€ par ménage
-- **Coût de la vie Paris vs Province** : +29% en moyenne
+- **Taux d'épargne des ménages français** : 17,2% du revenu disponible au 2e trimestre 2026 (INSEE)
+- **Taux d'épargne financière** : 9,5% au 1er trimestre 2026 (Banque de France)
+- **Consommation des ménages de l'agglomération parisienne** : +16% par rapport à la moyenne nationale (INSEE, 2017)
 
 ## ⚠️ Erreurs à Éviter
 
@@ -171,7 +177,7 @@ La règle 50/30/20 adaptée à Paris :
 
 ### Mauvaises Habitudes Budgétaires
 
-- **Achats impulsifs** : 56% des Français vivent au-dessus de leurs moyens
+- **Achats impulsifs** : suivez vos dépenses réelles
 - **Absence de suivi** : ne pas connaître ses dépenses réelles
 - **Épargne irrégulière** : attendre la fin du mois pour épargner
 - **Négligence des petites dépenses** : cafés, transports, abonnements

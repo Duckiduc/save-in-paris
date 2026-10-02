@@ -1,17 +1,23 @@
-import {
-  Card,
-  Typography,
-  Row,
-  Col,
-  Divider,
-  List,
-  Tag,
-  Alert,
-  Statistic,
-} from "antd";
-import { WarningOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { ArrowRight, Check, TriangleAlert } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Notice, Stat } from "@/components/shared";
+import { formatCurrency } from "../utils/financialUtils";
 
-const { Title, Paragraph, Text } = Typography;
+const Panel = ({ title, children }) => (
+  <div className="flex flex-col gap-3 rounded-lg border p-4">
+    <span className="text-sm font-medium">{title}</span>
+    {children}
+  </div>
+);
+
+const Row = ({ label, children }) => (
+  <li className="flex items-center justify-between gap-3 text-sm">
+    <span className="text-muted-foreground">{label}</span>
+    <span className="flex items-center gap-1.5 font-medium tabular-nums">
+      {children}
+    </span>
+  </li>
+);
 
 const GuideInfo = ({ section = "overview" }) => {
   // Guide data extracted from the markdown file
@@ -22,18 +28,12 @@ const GuideInfo = ({ section = "overview" }) => {
         personal: 30, // 30% maximum pour loisirs
         savings: 20, // 20% minimum pour épargne
       },
-      averageCosts: {
-        studioIntra: { min: 600, max: 1400 },
-        t2Paris: { min: 1280, max: 1628 },
-        charges: { min: 40, max: 120 },
-        insurance: { min: 12, max: 25 },
-      },
     },
     housing: {
       affordableArrondissements: [
         {
           district: "10e arrondissement",
-          price: "dès 390€",
+          price: "petites surfaces",
           highlight: "studios abordables",
         },
         {
@@ -55,8 +55,8 @@ const GuideInfo = ({ section = "overview" }) => {
       suburbs: [
         {
           name: "Montreuil",
-          savings: "-40%",
-          description: "par rapport à Paris intra-muros",
+          savings: "-27% au m²",
+          description: "loyer moyen en petite couronne par rapport à Paris (OLAP)",
         },
         {
           name: "Saint-Denis",
@@ -76,8 +76,8 @@ const GuideInfo = ({ section = "overview" }) => {
       ],
     },
     transport: {
-      navigoAll: 88.8,
-      navigo13: 82.8,
+      navigoAll: "90,80",
+      navigo23: "88,80",
       employerRefund: 50, // percentage
       alternatives: [
         {
@@ -103,16 +103,17 @@ const GuideInfo = ({ section = "overview" }) => {
       ],
     },
     salaries: {
-      cadres: 6044,
-      intermediaires: 3210,
-      employes: 2042,
-      moyenne: 4313,
+      // Salaire net mensuel moyen en EQTP à Paris, secteur privé (INSEE, 2024)
+      cadres: 5663,
+      intermediaires: 2842,
+      employes: 2112,
+      moyenne: 3836,
     },
     savings: {
       products: [
-        { name: "Livret A", rate: "2,4%", type: "épargne de précaution" },
-        { name: "LDDS", rate: "2,4%", type: "complément Livret A" },
-        { name: "LEP", rate: "3,5%", type: "revenus modestes" },
+        { name: "Livret A", rate: "1,7%", type: "épargne de précaution" },
+        { name: "LDDS", rate: "1,7%", type: "complément Livret A" },
+        { name: "LEP", rate: "2,5%", type: "revenus modestes" },
         { name: "Assurance-vie", rate: "variable", type: "moyen/long terme" },
         { name: "PEA", rate: "variable", type: "actions européennes" },
       ],
@@ -127,318 +128,192 @@ const GuideInfo = ({ section = "overview" }) => {
       "Négliger l'assurance habitation obligatoire",
       "Surévaluer sa capacité sans prévoir les imprévus",
       "Oublier les frais annexes (déménagement, caution)",
-      "Achats impulsifs (56% des Français vivent au-dessus de leurs moyens)",
+      "Achats impulsifs",
       "Absence de suivi des dépenses réelles",
     ],
   };
 
-  const renderOverview = () => (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} md={12}>
-        <Card title="📊 Règle Budgétaire 50/30/20" size="small">
-          <Row gutter={16}>
-            <Col span={8}>
-              <Statistic
-                title="Essentiel"
-                value={guideData.overview.budgetRule.essential}
-                suffix="% max"
-                valueStyle={{ color: "#ff6b6b", fontSize: "18px" }}
-              />
-              <Text type="secondary" style={{ fontSize: "11px" }}>
-                logement, transport, alimentation
-              </Text>
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title="Loisirs"
-                value={guideData.overview.budgetRule.personal}
-                suffix="% max"
-                valueStyle={{ color: "#4ecdc4", fontSize: "18px" }}
-              />
-              <Text type="secondary" style={{ fontSize: "11px" }}>
-                sorties, shopping, hobbies
-              </Text>
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title="Épargne"
-                value={guideData.overview.budgetRule.savings}
-                suffix="% min"
-                valueStyle={{ color: "#45b7d1", fontSize: "18px" }}
-              />
-              <Text type="secondary" style={{ fontSize: "11px" }}>
-                investissements, urgence
-              </Text>
-            </Col>
-          </Row>
-        </Card>
-      </Col>
+  const { overview, housing, transport, food, salaries, savings, warnings } =
+    guideData;
 
-      <Col xs={24} md={12}>
-        <Card title="💰 Salaires Moyens Paris" size="small">
-          <List size="small" split={false}>
-            <List.Item>
-              <Text strong>Cadres:</Text>{" "}
-              <Text style={{ color: "#78dbff" }}>
-                {guideData.salaries.cadres}€ nets/mois
-              </Text>
-            </List.Item>
-            <List.Item>
-              <Text strong>Intermédiaires:</Text>{" "}
-              <Text style={{ color: "#78dbff" }}>
-                {guideData.salaries.intermediaires}€ nets/mois
-              </Text>
-            </List.Item>
-            <List.Item>
-              <Text strong>Employés:</Text>{" "}
-              <Text style={{ color: "#78dbff" }}>
-                {guideData.salaries.employes}€ nets/mois
-              </Text>
-            </List.Item>
-            <List.Item>
-              <Text strong>Moyenne:</Text>{" "}
-              <Text style={{ color: "#78dbff", fontWeight: "bold" }}>
-                {guideData.salaries.moyenne}€ nets/mois
-              </Text>
-            </List.Item>
-          </List>
-        </Card>
-      </Col>
-    </Row>
+  const renderOverview = () => (
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Règle budgétaire 50/30/20">
+        <div className="grid grid-cols-3 gap-3">
+          <Stat
+            label="Essentiel"
+            value={`${overview.budgetRule.essential}% max`}
+            hint="logement, transport, alimentation"
+          />
+          <Stat
+            label="Loisirs"
+            value={`${overview.budgetRule.personal}% max`}
+            hint="sorties, shopping"
+          />
+          <Stat
+            label="Épargne"
+            value={`${overview.budgetRule.savings}% min`}
+            hint="placements, précaution"
+          />
+        </div>
+      </Panel>
+      <Panel title="Salaires nets moyens à Paris (INSEE, 2024)">
+        <ul className="flex flex-col gap-1.5">
+          <Row label="Cadres">{formatCurrency(salaries.cadres)}</Row>
+          <Row label="Professions intermédiaires">
+            {formatCurrency(salaries.intermediaires)}
+          </Row>
+          <Row label="Employés">{formatCurrency(salaries.employes)}</Row>
+          <Row label="Ensemble">{formatCurrency(salaries.moyenne)}</Row>
+        </ul>
+      </Panel>
+    </div>
   );
 
   const renderHousingGuide = () => (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} md={12}>
-        <Card title="🏠 Arrondissements Abordables" size="small">
-          <List size="small">
-            {guideData.housing.affordableArrondissements.map((area, index) => (
-              <List.Item key={index}>
-                <List.Item.Meta
-                  title={
-                    <Text style={{ color: "#78dbff" }}>{area.district}</Text>
-                  }
-                  description={
-                    <>
-                      <Tag color="green">{area.price}</Tag>
-                      <Text type="secondary">{area.highlight}</Text>
-                    </>
-                  }
-                />
-              </List.Item>
-            ))}
-          </List>
-        </Card>
-      </Col>
-
-      <Col xs={24} md={12}>
-        <Card title="🚇 Alternatives Banlieue" size="small">
-          <List size="small">
-            {guideData.housing.suburbs.map((suburb, index) => (
-              <List.Item key={index}>
-                <List.Item.Meta
-                  title={
-                    <Text style={{ color: "#78dbff" }}>{suburb.name}</Text>
-                  }
-                  description={
-                    <>
-                      <Tag color="blue">{suburb.savings}</Tag>
-                      <Text type="secondary">{suburb.description}</Text>
-                    </>
-                  }
-                />
-              </List.Item>
-            ))}
-          </List>
-        </Card>
-      </Col>
-    </Row>
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Arrondissements abordables">
+        <ul className="flex flex-col gap-2">
+          {housing.affordableArrondissements.map((area) => (
+            <li key={area.district} className="flex flex-col text-sm">
+              <span className="font-medium">{area.district}</span>
+              <span className="text-muted-foreground">
+                {area.price}, {area.highlight}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+      <Panel title="Alternatives en banlieue">
+        <ul className="flex flex-col gap-2">
+          {housing.suburbs.map((suburb) => (
+            <li key={suburb.name} className="flex flex-col text-sm">
+              <span className="flex items-center gap-2 font-medium">
+                {suburb.name}
+                <Badge variant="secondary">{suburb.savings}</Badge>
+              </span>
+              <span className="text-muted-foreground">
+                {suburb.description}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    </div>
   );
 
   const renderTransportGuide = () => (
-    <Card title="🚇 Optimisation Transport" size="small">
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12}>
-          <Paragraph>
-            <Text strong>Pass Navigo toutes zones:</Text>{" "}
-            <Text style={{ color: "#78dbff" }}>
-              {guideData.transport.navigoAll}€/mois
-            </Text>
-          </Paragraph>
-          <Paragraph>
-            <Text strong>Pass Navigo zones 1-3:</Text>{" "}
-            <Text style={{ color: "#78dbff" }}>
-              {guideData.transport.navigo13}€/mois
-            </Text>
-          </Paragraph>
-          <Alert
-            message="Remboursement employeur: 50% minimum"
-            type="info"
-            showIcon
-            size="small"
-            style={{ marginBottom: 12 }}
-          />
-        </Col>
-        <Col xs={24} sm={12}>
-          <Text strong style={{ color: "#78dbff" }}>
-            Alternatives économiques:
-          </Text>
-          <List size="small">
-            {guideData.transport.alternatives.map((alt, index) => (
-              <List.Item key={index} style={{ padding: "4px 0" }}>
-                <Text>{alt.option}: </Text>
-                <Tag color="green">{alt.cost}</Tag>
-                <Text type="secondary">{alt.benefit}</Text>
-              </List.Item>
-            ))}
-          </List>
-        </Col>
-      </Row>
-    </Card>
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Forfait Navigo">
+        <ul className="flex flex-col gap-1.5">
+          <Row label="Toutes zones">{transport.navigoAll}€/mois</Row>
+          <Row label="Zones 2-3">{transport.navigo23}€/mois</Row>
+        </ul>
+        <Notice
+          title={`Prise en charge employeur : ${transport.employerRefund}% minimum`}
+        />
+      </Panel>
+      <Panel title="Alternatives économiques">
+        <ul className="flex flex-col gap-2">
+          {transport.alternatives.map((alt) => (
+            <li key={alt.option} className="flex flex-col text-sm">
+              <span className="flex items-center gap-2 font-medium">
+                {alt.option}
+                <Badge variant="secondary">{alt.cost}</Badge>
+              </span>
+              <span className="text-muted-foreground">{alt.benefit}</span>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    </div>
   );
 
   const renderFoodGuide = () => (
-    <Card title="🛒 Budget Alimentation Optimisé" size="small">
-      <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12}>
-          <Title level={5} style={{ color: "#78dbff", margin: "8px 0" }}>
-            Budgets par profil:
-          </Title>
-          <List size="small">
-            <List.Item>
-              <Text>Personne seule: </Text>
-              <Tag color="orange">{guideData.food.budgets.single.normal}€</Tag>
-              <Text> → </Text>
-              <Tag color="green">
-                {guideData.food.budgets.single.optimized}€
-              </Tag>
-            </List.Item>
-            <List.Item>
-              <Text>Couple: </Text>
-              <Tag color="orange">{guideData.food.budgets.couple.normal}€</Tag>
-              <Text> → </Text>
-              <Tag color="green">
-                {guideData.food.budgets.couple.optimized}€
-              </Tag>
-            </List.Item>
-            <List.Item>
-              <Text>Famille de 4: </Text>
-              <Tag color="orange">{guideData.food.budgets.family4.normal}€</Tag>
-              <Text> → </Text>
-              <Tag color="green">
-                {guideData.food.budgets.family4.optimized}€
-              </Tag>
-            </List.Item>
-          </List>
-        </Col>
-        <Col xs={24} sm={12}>
-          <Title level={5} style={{ color: "#78dbff", margin: "8px 0" }}>
-            Stratégies d&apos;économie:
-          </Title>
-          <List size="small">
-            {guideData.food.strategies.map((strategy, index) => (
-              <List.Item key={index} style={{ padding: "2px 0" }}>
-                <CheckCircleOutlined
-                  style={{ color: "#52c41a", marginRight: 4 }}
-                />
-                <Text style={{ fontSize: "12px" }}>{strategy}</Text>
-              </List.Item>
-            ))}
-          </List>
-        </Col>
-      </Row>
-    </Card>
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Budget mensuel : habituel, puis optimisé">
+        <ul className="flex flex-col gap-1.5">
+          {[
+            ["Personne seule", food.budgets.single],
+            ["Couple", food.budgets.couple],
+            ["Famille de 4", food.budgets.family4],
+          ].map(([label, budget]) => (
+            <Row key={label} label={label}>
+              {budget.normal}€
+              <ArrowRight className="size-3.5 text-muted-foreground" />
+              <span className="text-success">{budget.optimized}€</span>
+            </Row>
+          ))}
+        </ul>
+      </Panel>
+      <Panel title="Stratégies d'économie">
+        <ul className="flex flex-col gap-1.5">
+          {food.strategies.map((strategy) => (
+            <li key={strategy} className="flex items-start gap-2 text-sm">
+              <Check className="mt-0.5 size-4 shrink-0 text-success" />
+              {strategy}
+            </li>
+          ))}
+        </ul>
+      </Panel>
+    </div>
   );
 
   const renderSavingsGuide = () => (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} md={12}>
-        <Card title="💎 Produits d'Épargne Recommandés" size="small">
-          <List size="small">
-            {guideData.savings.products.map((product, index) => (
-              <List.Item key={index}>
-                <List.Item.Meta
-                  title={
-                    <span>
-                      <Text style={{ color: "#78dbff" }}>{product.name}</Text>
-                      <Tag color="blue" style={{ marginLeft: 8 }}>
-                        {product.rate}
-                      </Tag>
-                    </span>
-                  }
-                  description={<Text type="secondary">{product.type}</Text>}
-                />
-              </List.Item>
-            ))}
-          </List>
-        </Card>
-      </Col>
-
-      <Col xs={24} md={12}>
-        <Card title="🎯 Objectifs par Profil" size="small">
-          <Row gutter={8}>
-            <Col span={8}>
-              <Statistic
-                title="Débutant"
-                value={`${guideData.savings.targets.beginner.min}-${guideData.savings.targets.beginner.max}`}
-                suffix="%"
-                valueStyle={{ color: "#ffa726", fontSize: "16px" }}
-              />
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title="Expérimenté"
-                value={`${guideData.savings.targets.experienced.min}-${guideData.savings.targets.experienced.max}`}
-                suffix="%"
-                valueStyle={{ color: "#66bb6a", fontSize: "16px" }}
-              />
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title="Investisseur"
-                value={`${guideData.savings.targets.investor.min}-${guideData.savings.targets.investor.max}`}
-                suffix="%"
-                valueStyle={{ color: "#42a5f5", fontSize: "16px" }}
-              />
-            </Col>
-          </Row>
-          <Divider style={{ margin: "12px 0" }} />
-          <Alert
-            message="Épargne automatique recommandée dès réception du salaire"
-            type="success"
-            showIcon
-            size="small"
+    <div className="grid gap-4 md:grid-cols-2">
+      <Panel title="Produits d'épargne">
+        <ul className="flex flex-col gap-2">
+          {savings.products.map((product) => (
+            <li key={product.name} className="flex flex-col text-sm">
+              <span className="flex items-center gap-2 font-medium">
+                {product.name}
+                <Badge variant="secondary">{product.rate}</Badge>
+              </span>
+              <span className="text-muted-foreground">{product.type}</span>
+            </li>
+          ))}
+        </ul>
+      </Panel>
+      <Panel title="Objectifs d'épargne par profil">
+        <div className="grid grid-cols-3 gap-3">
+          <Stat
+            label="Débutant"
+            value={`${savings.targets.beginner.min}-${savings.targets.beginner.max}%`}
           />
-        </Card>
-      </Col>
-    </Row>
+          <Stat
+            label="Expérimenté"
+            value={`${savings.targets.experienced.min}-${savings.targets.experienced.max}%`}
+          />
+          <Stat
+            label="Investisseur"
+            value={`${savings.targets.investor.min}-${savings.targets.investor.max}%`}
+          />
+        </div>
+        <Notice
+          tone="success"
+          title="Épargne automatique conseillée dès réception du salaire"
+        />
+      </Panel>
+    </div>
   );
 
   const renderWarnings = () => (
-    <Card title="⚠️ Erreurs à Éviter" size="small">
-      <List size="small">
-        {guideData.warnings.map((warning, index) => (
-          <List.Item key={index} style={{ padding: "4px 0" }}>
-            <WarningOutlined style={{ color: "#ff7875", marginRight: 8 }} />
-            <Text style={{ fontSize: "13px" }}>{warning}</Text>
-          </List.Item>
+    <div className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-2">
+        {warnings.map((warning) => (
+          <li key={warning} className="flex items-start gap-2 text-sm">
+            <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warning" />
+            {warning}
+          </li>
         ))}
-      </List>
-      <Alert
-        message="56% des Français vivent au-dessus de leurs moyens"
-        description="Importance du suivi budgétaire régulier"
-        type="warning"
-        showIcon
-        size="small"
-        style={{ marginTop: 12 }}
-      />
-    </Card>
+      </ul>
+      <Notice title="Épargne de précaution conseillée : 3 à 6 mois de revenus">
+        Repère de la Banque de France (Mes questions d&apos;argent)
+      </Notice>
+    </div>
   );
 
-  // Render different sections based on the section prop
   switch (section) {
-    case "overview":
-      return <div style={{ marginBottom: 24 }}>{renderOverview()}</div>;
     case "housing":
       return renderHousingGuide();
     case "transport":
@@ -449,28 +324,6 @@ const GuideInfo = ({ section = "overview" }) => {
       return renderSavingsGuide();
     case "warnings":
       return renderWarnings();
-    case "complete":
-      return (
-        <div>
-          <Title
-            level={3}
-            style={{ color: "#78dbff", textAlign: "center", marginBottom: 24 }}
-          >
-            📖 Guide Complet d&apos;Épargne à Paris
-          </Title>
-          {renderOverview()}
-          <Divider />
-          {renderHousingGuide()}
-          <Divider />
-          {renderTransportGuide()}
-          <Divider />
-          {renderFoodGuide()}
-          <Divider />
-          {renderSavingsGuide()}
-          <Divider />
-          {renderWarnings()}
-        </div>
-      );
     default:
       return renderOverview();
   }

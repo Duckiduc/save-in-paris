@@ -1,620 +1,312 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Calculator } from "lucide-react";
 import {
-  Form,
-  Select,
-  InputNumber,
-  Button,
-  Space,
-  Divider,
-  Row,
-  Col,
-  Switch,
-  Card,
-  Typography,
-  Tooltip,
-  Alert,
-} from "antd";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Choice, Field, Hint, NumberInput } from "@/components/shared";
 import {
-  CalculatorOutlined,
-  InfoCircleOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+  computeBudget,
+  loadScenario,
+  saveScenario,
+} from "../utils/financialUtils";
 
-const { Option } = Select;
-const { Paragraph } = Typography;
+const ageRanges = [
+  { value: "18-25", label: "18-25 ans" },
+  { value: "26-35", label: "26-35 ans" },
+  { value: "36-45", label: "36-45 ans" },
+  { value: "46-55", label: "46-55 ans" },
+  { value: "55+", label: "55 ans et plus" },
+];
+
+const locations = [
+  { value: "paris-intra", label: "Paris intra-muros" },
+  { value: "petite-couronne", label: "Petite couronne (92, 93, 94)" },
+  { value: "grande-couronne", label: "Grande couronne (77, 78, 91, 95)" },
+];
+
+const housingTypes = [
+  { value: "studio", label: "Studio" },
+  { value: "t2", label: "2 pièces" },
+  { value: "t3", label: "3 pièces" },
+  { value: "t4", label: "4 pièces et +" },
+];
+
+const DEFAULTS = {
+  isOwner: false,
+  isCouple: false,
+  employerRefund: true,
+  dependents: 0,
+};
+
+const validate = (values) => {
+  const errors = {};
+  if (!values.salary) errors.salary = "Veuillez saisir votre salaire";
+  else if (values.salary < 1000) errors.salary = "Salaire minimum 1000€";
+  if (!values.ageRange) errors.ageRange = "Sélectionnez votre âge";
+  if (!values.location) errors.location = "Sélectionnez votre zone";
+  if (!values.housingType)
+    errors.housingType = "Sélectionnez le type de logement";
+  if (!values.isOwner && values.rent == null)
+    errors.rent = "Veuillez entrer votre loyer";
+  if (values.isCouple && !values.partnerSalary)
+    errors.partnerSalary = "Veuillez saisir le salaire du conjoint";
+  return errors;
+};
+
+const Toggle = ({ label, hint, checked, onChange }) => (
+  <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/30 px-3 py-2 transition-colors has-data-[state=checked]:border-primary/40 has-data-[state=checked]:bg-primary/5">
+    <div className="flex items-center gap-1.5">
+      <Label>{label}</Label>
+      {hint && <Hint>{hint}</Hint>}
+    </div>
+    <Switch checked={checked} onCheckedChange={onChange} />
+  </div>
+);
 
 const SavingsCalculator = ({ onCalculationComplete }) => {
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [showMethodology, setShowMethodology] = useState(false);
+  const [values, setValues] = useState(DEFAULTS);
+  const [errors, setErrors] = useState({});
 
-  const ageRanges = [
-    { value: "18-25", label: "18-25 ans (Gen Z)" },
-    { value: "26-35", label: "26-35 ans (Gen Z/Millennials)" },
-    { value: "36-45", label: "36-45 ans (Millennials/Gen X)" },
-    { value: "46-55", label: "46-55 ans (Gen X)" },
-    { value: "55+", label: "55+ ans (Baby Boomers)" },
-  ];
+  const set = (name) => (value) =>
+    setValues((current) => ({ ...current, [name]: value }));
 
-  const locations = [
-    { value: "paris-intra", label: "Paris intra-muros" },
-    { value: "petite-couronne", label: "Petite couronne (92, 93, 94)" },
-    { value: "grande-couronne", label: "Grande couronne (77, 78, 91, 95)" },
-  ];
-
-  const housingTypes = [
-    { value: "studio", label: "Studio" },
-    { value: "t2", label: "2 pièces" },
-    { value: "t3", label: "3 pièces" },
-    { value: "t4", label: "4 pièces et +" },
-  ];
-
-  const calculateSavings = async (values) => {
-    setLoading(true);
-
-    // Simulation de calcul basé sur les données réelles
-    const {
-      salary,
-      ageRange,
-      location,
-      housingType,
-      rent,
-      isOwner,
-      additionalExpenses,
-      currentSavings,
-      dependents,
-    } = values;
-
-    // Calculs basés sur les coûts moyens parisiens
-    const transportCost = location === "paris-intra" ? 84 : 88.8;
-    const foodCost = 350 + dependents * 200; // Base + par personne supplémentaire
-
-    // Données de référence pour les calculs de logement
-    const equivalentRents = {
-      "paris-intra": {
-        studio: 800, // Moyenne des arrondissements parisiens
-        t2: 1450,
-        t3: 2150,
-        t4: 2850,
-      },
-      "petite-couronne": {
-        studio: 650, // Moyenne proche banlieue
-        t2: 950,
-        t3: 1400,
-        t4: 1850,
-      },
-      "grande-couronne": {
-        studio: 500, // Moyenne grande couronne
-        t2: 750,
-        t3: 1100,
-        t4: 1450,
-      },
-    };
-
-    const charges = {
-      studio: 40,
-      t2: 60,
-      t3: 80,
-      t4: 100,
-    };
-
-    const assurance = {
-      studio: 12,
-      t2: 15,
-      t3: 18,
-      t4: 20,
-    };
-
-    // Coûts de logement réalistes pour les propriétaires
-    let housingCost;
-    if (isOwner) {
-      // Coûts propriétaire basés sur 70% du loyer équivalent + charges + assurance
-      const equivalentRent = equivalentRents[location]?.[housingType] || 800;
-      const monthlyCharges = charges[housingType] || 60;
-      const monthlyInsurance = assurance[housingType] || 15;
-
-      // Coût propriétaire = 70% du loyer équivalent + charges + assurance
-      housingCost = equivalentRent * 0.7 + monthlyCharges + monthlyInsurance;
-    } else {
-      housingCost = rent;
-    }
-
-    const totalExpenses =
-      housingCost + transportCost + foodCost + (additionalExpenses || 0);
-    const disposableIncome = salary - totalExpenses;
-
-    // Recommandations selon l'âge
-    const savingsRateRecommendations = {
-      "18-25": 0.12,
-      "26-35": 0.17,
-      "36-45": 0.22,
-      "46-55": 0.27,
-      "55+": 0.2,
-    };
-
-    const recommendedSavingsRate = savingsRateRecommendations[ageRange] || 0.15;
-    const recommendedMonthlySavings = salary * recommendedSavingsRate;
-    const actualSavingsRate = disposableIncome / salary;
-
-    const results = {
-      monthlySalary: salary,
-      totalExpenses,
-      disposableIncome,
-      recommendedMonthlySavings,
-      actualSavingsRate: Math.max(0, actualSavingsRate),
-      recommendedSavingsRate,
-      savingsGap: recommendedMonthlySavings - Math.max(0, disposableIncome),
-      annualSavingsPotential: Math.max(0, disposableIncome) * 12,
-      canSave: disposableIncome > 0,
-      // Détail des calculs pour affichage
-      breakdown: {
-        housingCost: Math.round(housingCost),
-        transportCost: Math.round(transportCost),
-        foodCost: Math.round(foodCost),
-        additionalExpenses: additionalExpenses || 0,
-        isOwner,
-        housingDetails: isOwner
-          ? {
-              equivalentRent: equivalentRents[location]?.[housingType] || 800,
-              ownershipFactor: 0.7,
-              charges: charges[housingType] || 60,
-              insurance: assurance[housingType] || 15,
-            }
-          : null,
-      },
-    };
-
-    const profile = {
-      ageRange,
-      location,
-      housingType,
-      isOwner,
-      salary,
-      dependents,
-      currentSavings,
-    };
-
-    setTimeout(() => {
+  // Reprend le dernier scénario (lien partagé ou stockage local)
+  useEffect(() => {
+    const scenario = loadScenario();
+    if (!scenario) return;
+    const restored = { ...DEFAULTS, ...scenario.values };
+    setValues(restored);
+    if (Object.keys(validate(restored)).length === 0) {
+      const { results, profile } = computeBudget(restored);
       onCalculationComplete(results, profile);
-      setLoading(false);
-    }, 1000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const submit = (event) => {
+    event.preventDefault();
+    const found = validate(values);
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+    saveScenario(values);
+    const { results, profile } = computeBudget(values);
+    onCalculationComplete(results, profile, { scroll: true });
   };
 
   return (
-    <div className="web3-form-container">
-      {/* Methodology Explanation Card */}
-      <Card
-        title={
-          <span style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-            <InfoCircleOutlined style={{ marginRight: 8 }} />
-            Comment fonctionne le calculateur ?
-          </span>
-        }
-        style={{
-          marginBottom: 24,
-          background: "rgba(10, 11, 13, 0.6)",
-          border: "1px solid rgba(120, 219, 255, 0.2)",
-        }}
-        extra={
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => setShowMethodology(!showMethodology)}
-            style={{ color: "#78dbff" }}
-          >
-            {showMethodology ? "Masquer" : "Voir la méthode"}
-          </Button>
-        }
-      >
-        {showMethodology && (
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Alert
-              message="Données utilisées dans les calculs"
-              description={
-                <div style={{ color: "rgba(255, 255, 255, 0.8)" }}>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    • <strong>Transport :</strong> Pass Navigo moyen (84€ Paris,
-                    88.80€ banlieue)
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    • <strong>Alimentation :</strong> 350€/mois + 200€ par
-                    personne à charge
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    • <strong>Logement :</strong> Loyer pour locataires, ou pour
-                    propriétaires : 70% du loyer équivalent + charges
-                    copropriété + assurance habitation
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    • <strong>Taux d&apos;épargne recommandé par âge :</strong>
-                    <br />- 18-25 ans : 12% (constitution épargne de précaution)
-                    <br />- 26-35 ans : 17% (projet immobilier)
-                    <br />- 36-45 ans : 22% (constitution patrimoine)
-                    <br />- 46-55 ans : 27% (préparation retraite)
-                    <br />- 55+ ans : 20% (sécurisation patrimoine)
-                  </Paragraph>
-                </div>
-              }
-              type="info"
-              style={{
-                background: "rgba(24, 144, 255, 0.1)",
-                border: "1px solid rgba(24, 144, 255, 0.3)",
-              }}
-            />
+    <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label="Salaire net mensuel (€)"
+          hint="Votre salaire après charges sociales et impôt. C'est la base de tous les calculs."
+          error={errors.salary}
+          className="sm:col-span-2"
+        >
+          <NumberInput
+            value={values.salary}
+            onChange={set("salary")}
+            min={0}
+            placeholder="2 500"
+            aria-invalid={Boolean(errors.salary)}
+          />
+        </Field>
 
-            <Alert
-              message="Formule de calcul utilisée"
-              description={
-                <div style={{ color: "rgba(255, 255, 255, 0.8)" }}>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    <strong>1. Dépenses totales =</strong> Loyer + Transport +
-                    Alimentation + Autres dépenses
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    <strong>2. Épargne possible =</strong> Salaire net -
-                    Dépenses totales
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 8, color: "inherit" }}>
-                    <strong>3. Taux d&apos;épargne réel =</strong> (Épargne
-                    possible / Salaire net) × 100
-                  </Paragraph>
-                  <Paragraph style={{ marginBottom: 0, color: "inherit" }}>
-                    <strong>4. Épargne recommandée =</strong> Salaire net × Taux
-                    recommandé pour votre âge
-                  </Paragraph>
-                </div>
-              }
-              type="success"
-              style={{
-                background: "rgba(82, 196, 26, 0.1)",
-                border: "1px solid rgba(82, 196, 26, 0.3)",
-              }}
+        <Field
+          label="Tranche d'âge"
+          hint="Votre âge détermine le taux d'épargne conseillé par l'application."
+          error={errors.ageRange}
+        >
+          <Choice
+            value={values.ageRange}
+            onChange={set("ageRange")}
+            options={ageRanges}
+            placeholder="Votre âge"
+            aria-invalid={Boolean(errors.ageRange)}
+          />
+        </Field>
+
+        <Field
+          label="Zone géographique"
+          hint="Détermine le loyer et le prix de référence. Le forfait Navigo toutes zones est au tarif unique de 90,80€/mois."
+          error={errors.location}
+        >
+          <Choice
+            value={values.location}
+            onChange={set("location")}
+            options={locations}
+            placeholder="Votre zone"
+            aria-invalid={Boolean(errors.location)}
+          />
+        </Field>
+
+        <Field label="Type de logement" error={errors.housingType}>
+          <Choice
+            value={values.housingType}
+            onChange={set("housingType")}
+            options={housingTypes}
+            placeholder="Taille du logement"
+            aria-invalid={Boolean(errors.housingType)}
+          />
+        </Field>
+
+        {values.isOwner ? (
+          <Field label="Coût du logement">
+            <p className="text-sm text-muted-foreground">
+              Estimé à 70% du loyer équivalent, plus charges et assurance.
+            </p>
+          </Field>
+        ) : (
+          <Field
+            label="Loyer charges comprises (€)"
+            hint="Loyer, charges, eau, électricité, chauffage et internet."
+            error={errors.rent}
+          >
+            <NumberInput
+              value={values.rent}
+              onChange={set("rent")}
+              min={0}
+              placeholder="1 200"
+              aria-invalid={Boolean(errors.rent)}
             />
-          </Space>
+          </Field>
         )}
-      </Card>
 
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={calculateSavings}
-        requiredMark={false}
-        className="web3-form"
-      >
-        <Row gutter={[16, 24]}>
-          <Col span={24}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Salaire net mensuel (€)
-                  <Tooltip
-                    title="Votre salaire après déduction des charges sociales et impôts. C'est la base de tous nos calculs."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="salary"
-              rules={[
-                { required: true, message: "Veuillez saisir votre salaire" },
-                { type: "number", min: 1000, message: "Salaire minimum 1000€" },
-              ]}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                placeholder="ex: 2500"
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                className="web3-input"
-              />
-            </Form.Item>
-          </Col>
+        <Field
+          label="Autres dépenses mensuelles (€)"
+          hint="Assurances, téléphone, loisirs, vêtements, frais médicaux non remboursés."
+        >
+          <NumberInput
+            value={values.additionalExpenses}
+            onChange={set("additionalExpenses")}
+            min={0}
+            placeholder="500"
+          />
+        </Field>
 
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Tranche d&apos;âge
-                  <Tooltip
-                    title="Votre âge détermine le taux d'épargne recommandé selon les objectifs de vie typiques (logement, famille, retraite)."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="ageRange"
-              rules={[{ required: true, message: "Sélectionnez votre âge" }]}
-            >
-              <Select
-                placeholder="Sélectionnez votre âge"
-                className="web3-select"
-              >
-                {ageRanges.map((age) => (
-                  <Option key={age.value} value={age.value}>
-                    {age.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+        <Field
+          label="Épargne actuelle (€)"
+          hint="Total de votre épargne existante. Sert de point de départ aux projections, à l'épargne de précaution et au projet d'achat."
+        >
+          <NumberInput
+            value={values.currentSavings}
+            onChange={set("currentSavings")}
+            min={0}
+            placeholder="10 000"
+          />
+        </Field>
 
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Zone géographique
-                  <Tooltip
-                    title="Les coûts de transport varient selon votre zone : Pass Navigo 84€ (Paris) vs 88.80€ (banlieue)."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="location"
-              rules={[
-                { required: true, message: "Sélectionnez votre localisation" },
-              ]}
-            >
-              <Select
-                placeholder="Choisissez votre zone"
-                className="web3-select"
-              >
-                {locations.map((loc) => (
-                  <Option key={loc.value} value={loc.value}>
-                    {loc.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+        <Field
+          label="Budget alimentation (€)"
+          hint="Facultatif. Sans saisie, l'application applique son hypothèse : 350€ par mois, + 250€ pour le conjoint, + 200€ par personne à charge. Il n'existe pas de montant officiel pour l'Île-de-France."
+        >
+          <NumberInput
+            value={values.foodBudget}
+            onChange={set("foodBudget")}
+            min={0}
+            placeholder="Estimé si vide"
+          />
+        </Field>
 
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Type de logement
-                  <Tooltip
-                    title="Le type de logement influence le loyer et les charges. Un studio coûte moins cher qu'un T4."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="housingType"
-              rules={[
-                {
-                  required: true,
-                  message: "Veuillez sélectionner le type de logement",
-                },
-              ]}
-            >
-              <Select placeholder="Type de logement" className="web3-select">
-                {housingTypes.map((type) => (
-                  <Option key={type.value} value={type.value}>
-                    {type.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
+        <Field
+          label="Personnes à charge"
+          hint="Chaque personne à charge ajoute 200€ par mois au budget alimentaire estimé."
+        >
+          <NumberInput
+            value={values.dependents}
+            onChange={(value) => set("dependents")(value ?? 0)}
+            min={0}
+            max={10}
+          />
+        </Field>
 
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Êtes-vous propriétaire ?
-                  <Tooltip
-                    title="Si vous êtes propriétaire, nous calculons vos coûts de logement réels : 70% du loyer équivalent de votre zone + charges de copropriété + assurance habitation."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="isOwner"
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              noStyle
-              shouldUpdate={(prevValues, currentValues) =>
-                prevValues.isOwner !== currentValues.isOwner
-              }
-            >
-              {({ getFieldValue }) =>
-                !getFieldValue("isOwner") ? (
-                  <Form.Item
-                    label={
-                      <span
-                        style={{
-                          color: "rgba(255, 255, 255, 0.9)",
-                          fontWeight: 600,
-                        }}
-                      >
-                        Loyer mensuel (charges comprises)
-                        <Tooltip
-                          title="Inclut le loyer + charges (eau, électricité, chauffage, internet). Représente généralement 30-40% du budget."
-                          placement="top"
-                        >
-                          <InfoCircleOutlined
-                            style={{ marginLeft: 4, color: "#78dbff" }}
-                          />
-                        </Tooltip>
-                      </span>
-                    }
-                    name="rent"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Veuillez entrer votre loyer",
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      style={{ width: "100%" }}
-                      min={0}
-                      max={5000}
-                      placeholder="1200"
-                      className="web3-input"
-                    />
-                  </Form.Item>
-                ) : null
-              }
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Autres dépenses mensuelles
-                  <Tooltip
-                    title="Inclut : assurances, téléphone, loisirs, vêtements, frais médicaux non remboursés, etc."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="additionalExpenses"
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                max={5000}
-                placeholder="500"
-                className="web3-input"
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Nombre de personnes à charge
-                  <Tooltip
-                    title="Chaque personne à charge ajoute environ 200€/mois au budget alimentaire."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="dependents"
-              initialValue={0}
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                max={10}
-                placeholder="0"
-                className="web3-input"
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} sm={12}>
-            <Form.Item
-              label={
-                <span
-                  style={{ color: "rgba(255, 255, 255, 0.9)", fontWeight: 600 }}
-                >
-                  Épargne actuelle
-                  <Tooltip
-                    title="Montant total de votre épargne existante (tous comptes confondus). Utilisé pour les projections futures."
-                    placement="top"
-                  >
-                    <InfoCircleOutlined
-                      style={{ marginLeft: 4, color: "#78dbff" }}
-                    />
-                  </Tooltip>
-                </span>
-              }
-              name="currentSavings"
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                min={0}
-                max={1000000}
-                formatter={(value) =>
-                  `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                }
-                parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                placeholder="10000"
-                className="web3-input"
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Divider
-          style={{ borderColor: "rgba(120, 219, 255, 0.2)", margin: "32px 0" }}
-        />
-
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            size="large"
-            icon={<CalculatorOutlined />}
-            className="web3-button"
-            style={{
-              width: "100%",
-              height: "48px",
-              background: "linear-gradient(135deg, #78dbff, #ff77c6)",
-              border: "none",
-              borderRadius: "12px",
-              fontSize: "16px",
-              fontWeight: 600,
-              boxShadow: "0 8px 32px rgba(120, 219, 255, 0.3)",
-              transition: "all 0.3s ease",
-            }}
+        {values.isCouple && (
+          <Field
+            label="Salaire net du conjoint (€)"
+            hint="Le taux d'épargne est calculé sur les revenus du foyer."
+            error={errors.partnerSalary}
           >
-            Calculer mon épargne
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+            <NumberInput
+              value={values.partnerSalary}
+              onChange={set("partnerSalary")}
+              min={0}
+              placeholder="2 500"
+              aria-invalid={Boolean(errors.partnerSalary)}
+            />
+          </Field>
+        )}
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Toggle
+          label="Propriétaire"
+          hint="Coût estimé : 70% du loyer équivalent de votre zone, plus charges de copropriété et assurance habitation."
+          checked={values.isOwner}
+          onChange={set("isOwner")}
+        />
+        <Toggle
+          label="Budget en couple"
+          hint="Ajoute le revenu de votre conjoint, un second forfait Navigo et 250€ d'alimentation."
+          checked={values.isCouple}
+          onChange={set("isCouple")}
+        />
+        <Toggle
+          label="Navigo remboursé à 50%"
+          hint="L'employeur doit prendre en charge 50% de l'abonnement de transport des salariés. Désactivez si vous n'êtes pas salarié."
+          checked={values.employerRefund}
+          onChange={set("employerRefund")}
+        />
+      </div>
+
+      <Button
+        type="submit"
+        size="lg"
+        className="h-11 w-full border-0 bg-brand text-base text-white shadow-lg shadow-primary/25 transition-all hover:brightness-110 hover:shadow-primary/35 active:scale-[0.99]"
+      >
+        <Calculator data-icon="inline-start" />
+        Calculer mon épargne
+      </Button>
+
+      <Separator />
+
+      <Accordion type="single" collapsible>
+        <AccordionItem value="method">
+          <AccordionTrigger>Comment fonctionne le calcul ?</AccordionTrigger>
+          <AccordionContent className="flex flex-col gap-2 text-muted-foreground">
+            <p>
+              <strong className="text-foreground">Dépenses</strong> = logement
+              + transport + alimentation + autres dépenses.
+            </p>
+            <p>
+              <strong className="text-foreground">Épargne possible</strong> =
+              revenus nets − dépenses.
+            </p>
+            <p>
+              <strong className="text-foreground">Transport</strong> : forfait
+              Navigo toutes zones (90,80€ en 2026), moitié prix si remboursé par
+              l&apos;employeur, un forfait par adulte.
+            </p>
+            <p>
+              <strong className="text-foreground">Alimentation</strong> :
+              votre budget s&apos;il est saisi, sinon 350€/mois, + 250€ pour le
+              conjoint, + 200€ par personne à charge.
+            </p>
+            <p>
+              <strong className="text-foreground">Objectif par âge</strong> :
+              12% (18-25 ans), 17% (26-35), 22% (36-45), 27% (46-55), 20% (55
+              et plus). Ce sont des repères de l&apos;application, pas des
+              chiffres officiels.
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </form>
   );
 };
 

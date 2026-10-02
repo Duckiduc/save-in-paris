@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Select, Row, Col } from "antd";
 import {
   BarChart,
   Bar,
@@ -7,144 +6,184 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
+  ReferenceLine,
   Cell,
 } from "recharts";
+import { Choice, chartAxis, chartGrid, chartTooltip } from "@/components/shared";
+import { SALARY_BY_DEPARTMENT } from "../utils/financialUtils";
 
-const { Option } = Select;
+// Salaire net mensuel moyen en EQTP par âge, secteur privé, France (INSEE, 2024)
+const salaryByAge = [
+  { age: "Moins de 25 ans", salaire: 1865 },
+  { age: "25-39 ans", salaire: 2567 },
+  { age: "40-49 ans", salaire: 3009 },
+  { age: "50-54 ans", salaire: 3175 },
+  { age: "55 ans et +", salaire: 3267 },
+];
+
+// Taux d'épargne par cinquième de niveau de vie, en % du revenu disponible (INSEE, 2022)
+const savingsByIncome = [
+  { tranche: "20% les plus modestes", taux: -29 },
+  { tranche: "2e cinquième", taux: 0 },
+  { tranche: "3e cinquième", taux: 6 },
+  { tranche: "4e cinquième", taux: 10 },
+  { tranche: "20% les plus aisés", taux: 27 },
+];
+
+// Loyer moyen hors charges en €/m² au 1er janvier 2025 (OLAP)
+const rentBySize = [
+  { taille: "1 pièce", paris: 30.4, petite: 23.7, grande: 21.4 },
+  { taille: "2 pièces", paris: 26.7, petite: 20.2, grande: 17.0 },
+  { taille: "3 pièces", paris: 25.1, petite: 17.9, grande: 14.6 },
+  { taille: "4 pièces", paris: 24.3, petite: 16.9, grande: 14.0 },
+];
+
+const salaryByDepartment = Object.entries(SALARY_BY_DEPARTMENT)
+  .map(([code, { name, ensemble, zone }]) => ({
+    departement: `${name} (${code})`,
+    salaire: ensemble,
+    zone,
+  }))
+  .sort((a, b) => b.salaire - a.salaire);
+
+const CHARTS = {
+  "salary-age": {
+    label: "Salaires par âge",
+    description:
+      "Salaire net mensuel moyen par âge, secteur privé, France entière (INSEE, 2024)",
+  },
+  "salary-department": {
+    label: "Salaires par département",
+    description:
+      "Salaire net mensuel moyen par département d'Île-de-France, secteur privé (INSEE, 2024)",
+  },
+  "savings-income": {
+    label: "Taux d'épargne par niveau de vie",
+    description:
+      "Taux d'épargne des ménages selon leur niveau de vie, France (INSEE, 2022)",
+  },
+  rents: {
+    label: "Loyers au m²",
+    description:
+      "Loyer moyen hors charges selon la zone et la taille du logement (OLAP, janvier 2025)",
+  },
+};
 
 const DataVisualization = ({ userProfile }) => {
-  const [chartType, setChartType] = useState("savings-rate");
-
-  // Données basées sur les fichiers CSV
-  const savingsData = [
-    { age: "Moins de 26 ans", epargne: 1638, taux: 8.3, salaire: 2306 },
-    { age: "26-30 ans", epargne: 2345, taux: 11.8, salaire: 3100 },
-    { age: "30-40 ans", epargne: 3239, taux: 11.3, salaire: 4150 },
-    { age: "40-50 ans", epargne: 3239, taux: 11.3, salaire: 4150 },
-    { age: "50-60 ans", epargne: 5893, taux: 18.0, salaire: 4903 },
-    { age: "60+ ans", epargne: 5935, taux: 21.7, salaire: 4903 },
-  ];
-
-  const generationData = [
-    { generation: "Gen Z", tauxEpargne: 43, priorite: "Imprévus", risque: 56 },
-    {
-      generation: "Millennials",
-      tauxEpargne: 52,
-      priorite: "Immobilier",
-      risque: 40,
-    },
-    {
-      generation: "Gen X",
-      tauxEpargne: 51,
-      priorite: "Patrimoine",
-      risque: 28,
-    },
-    {
-      generation: "Baby Boomers",
-      tauxEpargne: 57,
-      priorite: "Retraite",
-      risque: 15,
-    },
-  ];
-
-  const costBreakdown = [
-    { name: "Logement", value: 45, color: "#1890ff" },
-    { name: "Transport", value: 15, color: "#52c41a" },
-    { name: "Alimentation", value: 20, color: "#faad14" },
-    { name: "Loisirs", value: 12, color: "#f5222d" },
-    { name: "Autres", value: 8, color: "#722ed1" },
-  ];
+  const [chartType, setChartType] = useState("salary-department");
 
   const renderChart = () => {
     switch (chartType) {
-      case "savings-rate":
+      case "salary-age":
         return (
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={savingsData}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <BarChart data={salaryByAge}>
+              <CartesianGrid {...chartGrid} />
               <XAxis
                 dataKey="age"
-                tick={{ fontSize: 12 }}
-                angle={-45}
+                {...chartAxis}
+                angle={-30}
                 textAnchor="end"
-                height={80}
+                height={70}
               />
-              <YAxis />
+              <YAxis {...chartAxis} tickFormatter={(value) => `${value}€`} />
               <Tooltip
-                formatter={(value, name) => [
-                  name === "taux" ? `${value}%` : `${value}€`,
-                  name === "taux" ? "Taux d'épargne" : "Épargne annuelle",
-                ]}
+                {...chartTooltip}
+                formatter={(value) => [`${value}€`, "Salaire net moyen"]}
               />
-              <Bar dataKey="taux" fill="#1890ff" name="taux" />
+              <Bar dataKey="salaire" fill="var(--chart-1)" radius={4} />
             </BarChart>
           </ResponsiveContainer>
         );
 
-      case "salary-comparison":
+      case "salary-department":
         return (
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={savingsData}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <BarChart
+              data={salaryByDepartment}
+              layout="vertical"
+              margin={{ left: 40 }}
+            >
+              <CartesianGrid {...chartGrid} vertical horizontal={false} />
               <XAxis
-                dataKey="age"
-                tick={{ fontSize: 12 }}
-                angle={-45}
-                textAnchor="end"
-                height={80}
+                type="number"
+                {...chartAxis}
+                tickFormatter={(value) => `${value}€`}
               />
-              <YAxis />
-              <Tooltip formatter={(value) => [`${value}€`, "Salaire moyen"]} />
-              <Line
-                type="monotone"
-                dataKey="salaire"
-                stroke="#52c41a"
-                strokeWidth={3}
-                dot={{ fill: "#52c41a", strokeWidth: 2, r: 6 }}
+              <YAxis
+                type="category"
+                dataKey="departement"
+                width={130}
+                {...chartAxis}
               />
-            </LineChart>
-          </ResponsiveContainer>
-        );
-
-      case "generation":
-        return (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={generationData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="generation" />
-              <YAxis />
               <Tooltip
-                formatter={(value) => [`${value}%`, "Taux d'épargne mensuelle"]}
+                {...chartTooltip}
+                formatter={(value) => [`${value}€`, "Salaire net moyen"]}
               />
-              <Bar dataKey="tauxEpargne" fill="#722ed1" />
-            </BarChart>
-          </ResponsiveContainer>
-        );
-
-      case "costs":
-        return (
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={costBreakdown}
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, value }) => `${name}: ${value}%`}
-              >
-                {costBreakdown.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+              <Bar dataKey="salaire" radius={4}>
+                {salaryByDepartment.map((entry) => (
+                  <Cell
+                    key={entry.departement}
+                    fill={
+                      entry.zone === userProfile?.location
+                        ? "var(--chart-1)"
+                        : "var(--chart-5)"
+                    }
+                  />
                 ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value}%`, "Part du budget"]} />
-            </PieChart>
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        );
+
+      case "savings-income":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={savingsByIncome}>
+              <CartesianGrid {...chartGrid} />
+              <XAxis
+                dataKey="tranche"
+                {...chartAxis}
+                angle={-30}
+                textAnchor="end"
+                height={90}
+              />
+              <YAxis {...chartAxis} tickFormatter={(value) => `${value}%`} />
+              <ReferenceLine y={0} stroke="var(--muted-foreground)" />
+              <Tooltip
+                {...chartTooltip}
+                formatter={(value) => [`${value}%`, "Taux d'épargne"]}
+              />
+              <Bar dataKey="taux" radius={4}>
+                {savingsByIncome.map((entry) => (
+                  <Cell
+                    key={entry.tranche}
+                    fill={entry.taux < 0 ? "var(--destructive)" : "var(--chart-1)"}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        );
+
+      case "rents":
+        return (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={rentBySize}>
+              <CartesianGrid {...chartGrid} />
+              <XAxis dataKey="taille" {...chartAxis} />
+              <YAxis {...chartAxis} tickFormatter={(value) => `${value}€`} />
+              <Tooltip
+                {...chartTooltip}
+                formatter={(value, name) => [`${value} €/m²`, name]}
+              />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="paris" name="Paris" fill="var(--chart-1)" radius={3} />
+              <Bar dataKey="petite" name="Petite couronne" fill="var(--chart-2)" radius={3} />
+              <Bar dataKey="grande" name="Grande couronne" fill="var(--chart-3)" radius={3} />
+            </BarChart>
           </ResponsiveContainer>
         );
 
@@ -153,64 +192,20 @@ const DataVisualization = ({ userProfile }) => {
     }
   };
 
-  const getChartDescription = () => {
-    switch (chartType) {
-      case "savings-rate":
-        return "Taux d'épargne moyen par tranche d'âge à Paris";
-      case "salary-comparison":
-        return "Évolution du salaire moyen net par âge à Paris";
-      case "generation":
-        return "Comportements d'épargne par génération";
-      case "costs":
-        return "Répartition moyenne du budget à Paris";
-      default:
-        return "";
-    }
-  };
-
   return (
-    <div>
-      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
-        <Col xs={24}>
-          <Select
-            value={chartType}
-            onChange={setChartType}
-            style={{ width: "100%" }}
-            placeholder="Choisir un graphique"
-          >
-            <Option value="savings-rate">Taux d&apos;épargne par âge</Option>
-            <Option value="salary-comparison">Salaires moyens</Option>
-            <Option value="generation">Comportements par génération</Option>
-            <Option value="costs">Répartition des coûts</Option>
-          </Select>
-        </Col>
-      </Row>
-
-      <div style={{ marginBottom: 16, textAlign: "center", color: "#666" }}>
-        {getChartDescription()}
-      </div>
-
+    <div className="flex flex-col gap-4">
+      <Choice
+        value={chartType}
+        onChange={setChartType}
+        options={Object.entries(CHARTS).map(([value, { label }]) => ({
+          value,
+          label,
+        }))}
+      />
+      <p className="text-sm text-muted-foreground">
+        {CHARTS[chartType].description}
+      </p>
       {renderChart()}
-
-      {userProfile && (
-        <div
-          style={{
-            marginTop: 16,
-            padding: 12,
-            backgroundColor: "#f6f8fa",
-            borderRadius: 6,
-          }}
-        >
-          <p className="profile-text" style={{ margin: 0, fontSize: "14px" }}>
-            💡 <strong>Votre profil :</strong> {userProfile.ageRange} ans,{" "}
-            {userProfile.location === "paris-intra"
-              ? "Paris intra-muros"
-              : userProfile.location === "petite-couronne"
-              ? "Petite couronne"
-              : "Grande couronne"}
-          </p>
-        </div>
-      )}
     </div>
   );
 };

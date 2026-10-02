@@ -1,201 +1,141 @@
-import { Modal, Typography, Collapse, Button, Space, Tag } from 'antd';
-import { BookOutlined, LinkOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { ExternalLink } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-const { Title, Paragraph, Text, Link } = Typography;
+// Sources officielles ou institutionnelles uniquement — vérifiées le 1er octobre 2026
+const sourcesData = [
+  {
+    key: 'transport',
+    title: 'Transport et Mobilité',
+    sources: [
+      { id: 'idfm-navigo-mois', date: '2026', title: 'Guide tarifaire — forfaits Navigo et tickets au 1er janvier 2026', figure: 'Navigo Mois : 90,80 € toutes zones, 88,80 € zones 2-3, 86,40 € zones 3-4, 84,40 € zones 4-5', url: 'https://www.iledefrance-mobilites.fr/medias/portail-idfm/acEkM5GXnQHGY2UT_IDFM_guide_tarifaire_A5_190326-2.pdf', provider: 'Île-de-France Mobilités' },
+      { id: 'idfm-tarifs', date: '2026', title: 'Titres et tarifs', url: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs', provider: 'Île-de-France Mobilités' },
+      { id: 'sp-transport', date: 'févr. 2026', title: 'Remboursement des frais de transport domicile-travail', figure: "Prise en charge employeur obligatoire de 50 % de l'abonnement", url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F19846', provider: 'Service-Public.fr' },
+    ]
+  },
+  {
+    key: 'real-estate',
+    title: 'Loyers et Immobilier',
+    sources: [
+      { id: 'olap-2025', date: 'janv. 2025', title: "Évolution en 2024 des loyers d'habitation du secteur locatif privé dans l'agglomération parisienne", figure: 'Loyer moyen hors charges : 26,3 €/m² à Paris, 19,1 €/m² en petite couronne, 15,6 €/m² en grande couronne ; emménagés récents : 28,3, 21,3 et 16,9 €/m²', url: 'https://www.observatoire-des-loyers.fr/sites/default/files/olap_documents/rapports_loyers/Rapport%20Paris%202025.pdf', provider: 'OLAP' },
+      { id: 'olap-carte', date: '2025', title: 'Carte des niveaux de loyers — agglomération parisienne', url: 'https://www.observatoires-des-loyers.org/connaitre-les-loyers/carte-des-niveaux-de-loyers/agglomeration-parisienne-hors-paris', provider: 'Observatoires locaux des loyers' },
+      { id: 'drihl-encadrement', date: 'juil. 2026', title: 'Arrêté n° IDF-2026-06-12-00003 fixant les loyers de référence pour la Ville de Paris', figure: 'Applicable du 1er juillet au 24 novembre 2026 (fin de l’expérimentation ELAN) ; loyer de référence majoré = référence + 20 %', url: 'https://www.drihl.ile-de-france.developpement-durable.gouv.fr/renouvellement-2026-de-l-arrete-annuel-d-a1512.html?lang=fr', provider: 'DRIHL Île-de-France' },
+      { id: 'paris-encadrement', date: '2026', title: "L'encadrement des loyers : comprendre le dispositif", url: 'https://www.paris.fr/pages/l-encadrement-des-loyers-comprendre-le-dispositif-29091', provider: 'Ville de Paris' },
+      { id: 'notaires-t2-2026', date: 'T2 2026', title: 'Conjoncture immobilière en Île-de-France au 2e trimestre 2026', figure: 'Appartements anciens : 9 560 €/m² à Paris, 6 130 €/m² en Île-de-France', url: 'https://paris.notaires.fr/fr/presse/communication-immobiliere-mensuelle/conjoncture-immobiliere-en-ile-de-france-au-2e-trimestre-2026', provider: 'Notaires du Grand Paris' },
+      { id: 'notaires-janv-2026', date: 'janv. 2026', title: 'Le marché immobilier résidentiel ancien dans le Grand Paris — communiqué du 26 mars 2026', figure: 'Appartements anciens : 9 570 €/m² à Paris, 4 910 €/m² en petite couronne, 3 190 €/m² en grande couronne', url: 'https://notairesdugrandparis.fr/sites/default/files/2026-03/Communiqu%C3%A9%20mensuel_2026-03_prix%20fin%20janvier%202026.pdf', provider: 'Notaires du Grand Paris' },
+      { id: 'notaires-frais', date: 'mai 2025', title: "Ventes immobilières : augmentation des droits d'enregistrement dans le Grand Paris", figure: "Frais et taxes d'acquisition proches de 8 % du prix ; taux départemental de 5 %, maintenu à 4,5 % pour les primo-accédants, jusqu'au 31 mars 2028", url: 'https://paris.notaires.fr/fr/actualites/ventes-immobilieres-augmentation-des-droits-denregistrement-dans-le-grand-paris', provider: 'Notaires du Grand Paris' },
+      { id: 'paris-opendata-loyers', date: 'juil. 2025', title: 'Logement — Encadrement des loyers (open data)', figure: "Loyers de référence par quartier, nombre de pièces et époque de construction, utilisés par le vérificateur de loyer", url: 'https://opendata.paris.fr/explore/dataset/logement-encadrement-des-loyers/', provider: 'Ville de Paris' },
+      { id: 'bdf-credits-habitat', date: 'juil. 2026', title: 'Crédits aux particuliers — juillet 2026', figure: "Taux moyen des nouveaux crédits à l'habitat hors renégociations : 3,30 % (3,21 % en mai)", url: 'https://www.banque-france.fr/fr/statistiques/credit/credits-aux-particuliers-2026-07', provider: 'Banque de France' },
+      { id: 'hcsf-credit', date: '2022', title: "Mesure relative à l'octroi de crédits immobiliers", figure: "Taux d'effort maximal de 35 %, durée maximale de 25 ans", url: 'https://www.economie.gouv.fr/hcsf/mesures/mesure-relative-loctroi-de-credits-immobiliers', provider: 'Haut Conseil de stabilité financière' },
+    ]
+  },
+  {
+    key: 'salaries',
+    title: 'Salaires et Revenus',
+    sources: [
+      { id: 'insee-salaires-dep', date: '2024', title: 'Salaire net mensuel moyen en EQTP par sexe et PCS dans le secteur privé — comparaisons départementales', figure: 'Paris : 3 836 € (cadres 5 663 €, professions intermédiaires 2 842 €, employés 2 112 €) ; Île-de-France : 3 479 € ; France : 2 733 €', url: 'https://www.insee.fr/fr/statistiques/2012733', provider: 'INSEE' },
+      { id: 'insee-salaires-prive', date: '2024', title: 'Les salaires dans le secteur privé en 2024 — Insee Première n° 2079', figure: 'Par âge (France) : 1 865 € avant 25 ans, 2 567 € de 25 à 39 ans, 3 009 € de 40 à 49 ans, 3 267 € à 55 ans et plus', url: 'https://www.insee.fr/fr/statistiques/8657156', provider: 'INSEE' },
+      { id: 'insee-essentiel-salaires', date: '2024', title: "L'essentiel sur... les salaires", url: 'https://www.insee.fr/fr/statistiques/7457170', provider: 'INSEE' },
+    ]
+  },
+  {
+    key: 'savings-products',
+    title: "Produits d'Épargne et Fiscalité",
+    sources: [
+      { id: 'sp-livret-a', date: 'août 2026', title: 'Livret A', figure: "1,7 % du 1er août 2026 au 31 janvier 2027, plafond 22 950 € (même taux pour le LDDS)", url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F2365', provider: 'Service-Public.fr' },
+      { id: 'sp-lep', date: 'août 2026', title: "Livret d'épargne populaire (LEP)", figure: '2,5 %, plafond 10 000 €, revenu fiscal de référence ≤ 23 028 € pour 1 part', url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F2367', provider: 'Service-Public.fr' },
+      { id: 'sp-pel', date: 'sept. 2026', title: 'Plan épargne logement (PEL)', figure: '2 % pour les PEL ouverts depuis le 1er janvier 2026, plafond 61 200 €', url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F16140', provider: 'Service-Public.fr' },
+      { id: 'sp-prelevements', date: '2026', title: 'Prélèvements sociaux sur les revenus du patrimoine et de placements', figure: 'Prélèvement forfaitaire unique de 31,4 % depuis 2026 (30 % maintenu pour assurance-vie, PEL et CEL)', url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F2329', provider: 'Service-Public.fr' },
+      { id: 'mqda-precaution', date: '2026', title: 'Une épargne de précaution : pourquoi et comment faire ?', figure: '3 à 6 mois de revenus', url: 'https://www.mesquestionsdargent.fr/epargne-et-placements/epargne-de-precaution', provider: 'Banque de France — Mes questions d\'argent' },
+    ]
+  },
+  {
+    key: 'savings',
+    title: 'Épargne des Ménages',
+    sources: [
+      { id: 'insee-comptes-t2-2026', date: 'T2 2026', title: 'Comptes nationaux trimestriels — Informations rapides n° 212', figure: "Taux d'épargne des ménages : 17,2 % du revenu disponible brut (17,9 % au T1)", url: 'https://www.insee.fr/fr/statistiques/9039499', provider: 'INSEE' },
+      { id: 'bdf-epargne-t1-2026', date: 'T1 2026', title: 'Épargne des ménages — 2026 T1', figure: "Taux d'épargne financière : 9,5 % (5,8 % en zone euro)", url: 'https://www.banque-france.fr/fr/statistiques/epargne/epargne-des-menages-2026-q1', provider: 'Banque de France' },
+      { id: 'insee-epargne-categories', date: '2022', title: 'Consommation et épargne par catégories de ménages', figure: "Taux d'épargne de -29 % pour les 20 % les plus modestes à 27 % pour les 20 % les plus aisés", url: 'https://www.insee.fr/fr/statistiques/8272803?sommaire=8071406', provider: 'INSEE' },
+      { id: 'amf-barometre-2025', date: '2025', title: "Baromètre de l'épargne et de l'investissement 2025", figure: '42 % des moins de 35 ans acceptent une part de risque sur leurs placements', url: 'https://www.amf-france.org/sites/institutionnel/files/private/2025-12/barometre-amf-2025.pdf', provider: 'Autorité des marchés financiers' },
+    ]
+  },
+  {
+    key: 'cost-of-living',
+    title: 'Prix et Coût de la Vie',
+    sources: [
+      { id: 'insee-ipc-sept-2026', date: 'sept. 2026', title: 'Indice des prix à la consommation — estimation provisoire, Informations rapides n° 242', figure: 'Inflation de 3,0 % sur un an', url: 'https://www.insee.fr/fr/statistiques/9056956', provider: 'INSEE' },
+      { id: 'insee-budget-famille', date: '2017', title: 'Les comportements de consommation en 2017 — enquête Budget de famille, Insee Première n° 1749', figure: "L'alimentation représente 14 % du budget des ménages de l'agglomération parisienne ; aucun montant mensuel officiel n'existe, prochains résultats attendus en 2028", url: 'https://www.insee.fr/fr/statistiques/4127596', provider: 'INSEE' },
+    ]
+  }
+];
 
-const Sources = ({ visible, onClose }) => {
-  const sourcesData = [
-    {
-      key: 'cost-of-living',
-      title: '💰 Coût de la Vie et Budget à Paris',
-      sources: [
-        { id: '^1_1', title: 'Budget étudiant Paris 2024', url: 'https://www.studely.com/fr/article/quel-budget-etudiant-pour-vivre-a-paris-en-2024/', provider: 'Studely' },
-        { id: '^1_2', title: 'Coût de la vie Paris', url: 'https://www.combien-coute.net/cout-de-la-vie/ile-de-france/paris/', provider: 'Combien Coûte' },
-        { id: '^1_3', title: 'Coût de la vie France 2024', url: 'https://www.studapart.com/fr/nos-astuces/quel-est-le-cout-de-la-vie-en-france-en-2024', provider: 'Studapart' },
-        { id: '^1_4', title: 'Coût de la vie Paris - Tarifs actuels', url: 'https://www.demenagement24.com/blog/conseils/cout-de-la-vie-a-paris-tarifs-actuels/', provider: 'Déménagement24' },
-        { id: '^1_32', title: 'Coût de la vie France 2024', url: 'https://www.riamoneytransfer.com/fr/blog/cout-de-la-vie-en-france-en-2024-paris-marseille-lyon-nice/', provider: 'RiaMoney' },
-        { id: '^1_33', title: 'Coût vie étudiante 2024', url: 'https://www.lafinancepourtous.com/2024/09/05/cout-de-la-vie-etudiante-la-rentree-2024-encore-synonyme-de-hausse/', provider: 'LaFinancePourTous' },
-      ]
-    },
-    {
-      key: 'real-estate',
-      title: '🏠 Immobilier et Logement Paris',
-      sources: [
-        { id: '^1_5', title: 'Prix loyer Paris', url: 'https://www.studapart.com/fr/proprietaires/guides-proprietaires/prix-loyer-paris', provider: 'Studapart' },
-        { id: '^1_7', title: 'Location appartement Paris 2025', url: 'https://fr.parisrental.com/blog/tout-sur-la-location-meublee/le-cout-de-la-location-dun-appartement-a-paris-en-2025', provider: 'Paris Rental' },
-        { id: '^1_9', title: 'Prix immobilier Paris', url: 'https://immobilier.lefigaro.fr/prix-immobilier/paris/ville-75056', provider: 'Le Figaro' },
-        { id: '^1_10', title: 'Prix immobilier Île-de-France', url: 'https://www.seloger.com/prix-de-l-immo/vente/ile-de-france/paris.htm', provider: 'SeLoger' },
-        { id: '^2_18', title: 'Prix immobilier Paris', url: 'https://www.meilleursagents.com/prix-immobilier/paris-75000/', provider: 'MeilleursAgents' },
-        { id: '^1_34', title: 'Prix mètre carré Paris', url: 'https://www.hosman.co/blog/paris-prix-metre-carre', provider: 'Hosman' },
-      ]
-    },
-    {
-      key: 'salaries',
-      title: '💼 Salaires et Revenus',
-      sources: [
-        { id: '^1_6', title: 'Salaire Paris', url: 'https://www.journaldunet.com/business/salaire/paris/departement-75', provider: 'Journal du Net' },
-        { id: '^1_8', title: 'Salaire moyen région 2024', url: 'https://www.helloworkplace.fr/salaire-moyen-region-2024/', provider: 'HelloWorkplace' },
-        { id: '^2_3', title: 'Salaire moyen France', url: 'https://www.hellowork.com/fr-fr/medias/salaire-moyen-france-secteurs-regions-metiers.html', provider: 'HelloWork' },
-        { id: '^2_7', title: 'Salaire moyen France 2024', url: 'https://newsentreprises.com/salaire-moyen-france-2024/', provider: 'News Entreprises' },
-        { id: '^2_9', title: 'Salaire Île-de-France', url: 'https://www.journaldunet.com/business/salaire/ile-de-france/region-11', provider: 'Journal du Net' },
-        { id: '^2_10', title: 'Salaire moyen France', url: 'https://early.app/fr/salaire-moyen/france/', provider: 'Early App' },
-      ]
-    },
-    {
-      key: 'transport',
-      title: '🚊 Transport et Mobilité',
-      sources: [
-        { id: '^1_24', title: 'Titres et tarifs', url: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs', provider: 'IDF Mobilités' },
-        { id: '^1_25', title: 'Forfait Navigo mensuel', url: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-mois', provider: 'IDF Mobilités' },
-        { id: '^1_26', title: 'Forfait Navigo annuel', url: 'https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-annuel', provider: 'IDF Mobilités' },
-        { id: '^1_27', title: 'Pass Navigo guide', url: 'https://www.capital.fr/conso/pass-navigo-demarche-forfait-et-prix-1476764', provider: 'Capital' },
-        { id: '^1_29', title: 'Meilleurs transports Paris', url: 'https://blog.ridemotto.com/meilleurs-moyens-transport-paris/', provider: 'RideMotto' },
-      ]
-    },
-    {
-      key: 'savings',
-      title: '💰 Épargne et Comportements Financiers',
-      sources: [
-        { id: '^1_37', title: 'Épargne ménages Q2 2024', url: 'https://www.banque-france.fr/fr/statistiques/epargne/epargne-des-menages-2024-q2', provider: 'Banque de France' },
-        { id: '^1_17', title: 'Taux épargne français 2024', url: 'https://www.lafinancepourtous.com/2025/06/04/le-taux-depargne-des-francais-atteint-18-fin-2024/', provider: 'LaFinancePourTous' },
-        { id: '^1_16', title: 'Épargne ménages faits et chiffres', url: 'https://www.fbf.fr/fr/lepargne-des-menages-faits-et-chiffres-cles/', provider: 'FBF' },
-        { id: '^1_18', title: 'Épargne moyenne français', url: 'https://www.ramify.fr/epargne/epargne-moyenne-des-francais', provider: 'Ramify' },
-        { id: '^2_22', title: 'Taux épargne ménages France', url: 'https://www.clubpatrimoine.com/contenus/graph-taux-epargne-menages-france', provider: 'Club Patrimoine' },
-        { id: '^2_23', title: 'Bilan épargne 2024', url: 'https://www.lassuranceenmouvement.com/2024/11/14/la-france-un-peuple-depargnants-bilan-2024/', provider: 'L\'Assurance en Mouvement' },
-      ]
-    },
-    {
-      key: 'generations',
-      title: '👥 Comportements par Génération',
-      sources: [
-        { id: '^2_4', title: 'Comportement financier Gen Z', url: 'https://business-cool.com/decryptage/analyse/generation-z-quel-est-leur-comportement-financier/', provider: 'Business Cool' },
-        { id: '^2_6', title: 'Habitudes dépense épargne Gen Z', url: 'https://www.forbes.fr/business/les-habitudes-de-depense-et-depargne-de-la-generation-z-et-leur-effet-sur-les-services-financiers/', provider: 'Forbes' },
-        { id: '^2_11', title: 'Stratégies placement Millennials', url: 'https://mylittlemoney.com/2017/11/22/epargne-les-droles-de-strategies-de-placement-des-millennials/', provider: 'MyLittleMoney' },
-        { id: '^2_17', title: 'Millennials meilleurs épargnants', url: 'https://www.mysweetimmo.com/2023/02/27/epargne-les-millenials-sont-les-meilleurs-epargnants-de-france-toutes-generations-confondues/', provider: 'MySweetImmo' },
-        { id: '^2_15', title: 'Génération X inquiétudes retraite', url: 'https://www.im.natixis.com/fr-fr/about/newsroom/press-releases/2024/pres-du-tiers-des-membres-de-la-generation-x-s-inquiete-de-ne-pas-pouvoir-prendre-sa-retraite', provider: 'Natixis' },
-      ]
-    },
-    {
-      key: 'insee',
-      title: '📊 Données Statistiques INSEE',
-      sources: [
-        { id: '^2_5', title: 'Statistiques revenus patrimoine', url: 'https://www.insee.fr/fr/statistiques/5650198', provider: 'INSEE' },
-        { id: '^2_30', title: 'Outil interactif économie', url: 'https://www.insee.fr/fr/outil-interactif/5367857/details/10_ECC/11_ECO/11E_Figure5', provider: 'INSEE' },
-        { id: '^2_32', title: 'Statistiques épargne 2024', url: 'https://www.insee.fr/fr/statistiques/7457170', provider: 'INSEE' },
-      ]
-    },
-    {
-      key: 'studies',
-      title: '📈 Études et Baromètres',
-      sources: [
-        { id: '^2_31', title: 'Baromètre épargne 2024', url: 'https://www.ifop.com/publication/barometre-2024-de-lepargne-en-france-et-en-regions/', provider: 'IFOP' },
-        { id: '^2_2', title: 'Baromètre Hauts-de-France', url: 'https://www.altaprofits.com/documentation/pdf/ESPACEPRESSE/septembre2024/CP-IFOP-Altaprofits-Barometre2024-Hauts-de-France.pdf', provider: 'Altaprofits' },
-        { id: '^2_33', title: 'Gen X Report', url: 'https://www.im.natixis.com/fr-fr/insights/investor-sentiment/2024/gen-x-report', provider: 'Natixis' },
-        { id: '^2_34', title: 'Épargne ou style de vie', url: 'https://blog.yomoni.fr/epargne-ou-style-de-vie/', provider: 'Yomoni' },
-      ]
-    }
-  ];
+const Sources = ({ visible, onClose }) => (
+  <Dialog open={visible} onOpenChange={(open) => !open && onClose()}>
+    <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle>Sources et références</DialogTitle>
+        <DialogDescription>
+          Sources officielles ou institutionnelles uniquement. L&apos;étiquette
+          indique la période des données. Dernière vérification : 2 octobre
+          2026.
+        </DialogDescription>
+      </DialogHeader>
 
-  const renderSourceLink = (source) => (
-    <div key={source.id} style={{ marginBottom: '8px', padding: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '6px' }}>
-      <Space>
-        <Tag color="blue" style={{ fontSize: '11px', minWidth: '45px', textAlign: 'center' }}>
-          {source.id}
-        </Tag>
-        <Text strong style={{ color: 'rgba(255,255,255,0.9)' }}>{source.provider}</Text>
-      </Space>
-      <div style={{ marginTop: '4px' }}>
-        <Link 
-          href={source.url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{ color: '#78dbff', fontSize: '13px' }}
-        >
-          <LinkOutlined style={{ marginRight: '4px' }} />
-          {source.title}
-        </Link>
-      </div>
-    </div>
-  );
+      <Accordion type="multiple" defaultValue={[sourcesData[0].key]}>
+        {sourcesData.map((category) => (
+          <AccordionItem key={category.key} value={category.key}>
+            <AccordionTrigger>{category.title}</AccordionTrigger>
+            <AccordionContent>
+              <ul className="flex flex-col gap-3">
+                {category.sources.map((source) => (
+                  <li key={source.id} className="flex flex-col gap-0.5">
+                    <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      {source.provider}
+                      <Badge variant="outline">{source.date}</Badge>
+                    </span>
+                    <a
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-start gap-1.5 font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      {source.title}
+                      <ExternalLink className="mt-1 size-3 shrink-0" />
+                    </a>
+                    {source.figure && (
+                      <span className="text-muted-foreground">
+                        {source.figure}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
 
-  return (
-    <Modal
-      title={
-        <Space>
-          <BookOutlined style={{ color: '#78dbff' }} />
-          <span style={{ color: '#ffffff' }}>Sources et Références</span>
-        </Space>
-      }
-      open={visible}
-      onCancel={onClose}
-      width={800}
-      footer={[
-        <Button key="close" type="primary" onClick={onClose}>
-          Fermer
-        </Button>
-      ]}
-      style={{ top: 20 }}
-      styles={{
-        mask: { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
-        content: { 
-          backgroundColor: 'rgba(10, 11, 13, 0.95)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '16px',
-          border: '1px solid rgba(120, 219, 255, 0.2)'
-        },
-        header: {
-          backgroundColor: 'transparent',
-          borderBottom: '1px solid rgba(120, 219, 255, 0.2)',
-          paddingBottom: '16px'
-        },
-        body: { 
-          backgroundColor: 'transparent',
-          maxHeight: '70vh',
-          overflowY: 'auto'
-        },
-        footer: {
-          backgroundColor: 'transparent',
-          borderTop: '1px solid rgba(120, 219, 255, 0.2)'
-        }
-      }}
-    >
-      <div style={{ marginBottom: '16px' }}>
-        <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '16px' }}>
-          <ExclamationCircleOutlined style={{ color: '#78dbff', marginRight: '8px' }} />
-          Cette application s&apos;appuie sur des données provenant de sources fiables et reconnues pour fournir 
-          des estimations réalistes du coût de la vie parisien et des comportements d&apos;épargne.
-        </Paragraph>
-      </div>
-      
-      <Collapse 
-        ghost
-        style={{ backgroundColor: 'transparent' }}
-        items={sourcesData.map(category => ({
-          key: category.key,
-          label: <Text strong style={{ color: '#ffffff', fontSize: '15px' }}>{category.title}</Text>,
-          children: (
-            <div>
-              {category.sources.map(renderSourceLink)}
-            </div>
-          ),
-          style: {
-            backgroundColor: 'rgba(255,255,255,0.02)',
-            borderRadius: '8px',
-            marginBottom: '8px',
-            border: '1px solid rgba(120, 219, 255, 0.1)'
-          }
-        }))}
-      />
-      
-      <div style={{ marginTop: '24px', padding: '16px', backgroundColor: 'rgba(120, 219, 255, 0.1)', borderRadius: '8px', border: '1px solid rgba(120, 219, 255, 0.2)' }}>
-        <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px', lineHeight: '1.6' }}>
-          <strong>Note importante :</strong> Toutes les données utilisées dans cette application proviennent de sources publiques et officielles. 
-          Les calculs et recommandations sont basés sur ces références mais ne constituent pas des conseils financiers personnalisés. 
-          Pour des décisions financières importantes, consultez toujours un professionnel agréé.
-        </Text>
-      </div>
-    </Modal>
-  );
-};
+      <p className="rounded-lg bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground">
+        Les taux d&apos;épargne conseillés par âge, le budget alimentaire (350
+        €/mois) et la règle 50/30/20 sont des hypothèses de l&apos;application
+        et non des chiffres officiels. Les calculs ne constituent pas des
+        conseils financiers personnalisés. Pour une décision importante,
+        consultez un professionnel agréé.
+      </p>
+    </DialogContent>
+  </Dialog>
+);
 
 export default Sources;

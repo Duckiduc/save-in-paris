@@ -4,24 +4,33 @@ Une application web moderne pour calculer et optimiser votre épargne à Paris e
 
 ## 🚀 Fonctionnalités
 
-- **Calculateur** : Calcul selon votre profil (âge, zone, situation)
+- **Calculateur** : Calcul selon votre profil (âge, zone, situation), seul ou en couple, avec remboursement employeur du Navigo
+- **Simulateur « Et si... ? »** : augmentation, colocation, déménagement, baisse des dépenses
+- **Épargne de précaution** : mois de dépenses couverts face au repère de 3 à 6 mois
+- **Où placer votre épargne** : répartition LEP / Livret A / LDDS selon les plafonds et l'éligibilité au LEP
+- **Projet d'achat** : apport, mensualité et capacité d'emprunt selon la règle des 35 %
+- **Encadrement des loyers** : vérification du loyer face au plafond légal parisien (open data de la Ville de Paris)
+- **Comparaison salariale** : votre salaire face à la moyenne INSEE par département et catégorie
+- **Projection** : en euros constants et après fiscalité, à partir de votre épargne actuelle
+- **Partage** : lien contenant le scénario, sauvegarde locale et export PDF par impression
 - **Visualisations de données** : Graphiques interactifs basés sur des données réelles
-- **Interface moderne** : Design minimaliste et responsive avec Ant Design
+- **Interface moderne** : Design minimaliste et responsive avec shadcn/ui
 - **Données réelles** : Basé sur les statistiques officielles du coût de la vie parisien
 
 ## 🛠️ Technologies
 
 - **React 18** avec Vite
-- **Ant Design** pour l'interface utilisateur
+- **shadcn/ui** (Radix UI) et **Tailwind CSS** pour l'interface utilisateur
 - **Recharts** pour les visualisations
-- **CSS moderne** avec gradients et animations
+- **Lucide** pour les icônes, thème clair ou sombre selon le système
 
 ## 📊 Données incluses
 
 - Coûts de la vie par zone (Paris intra-muros, petite/grande couronne)
-- Statistiques d'épargne par tranche d'âge
-- Comportements financiers par génération
-- Recommandations d'experts financiers
+- Loyers moyens par zone et taille de logement (OLAP)
+- Salaires moyens par département, catégorie et âge (INSEE)
+- Taux d'épargne par niveau de vie (INSEE)
+- Taux et plafonds de l'épargne réglementée (Service-Public.fr)
 
 ## 🎯 Comment utiliser
 
@@ -132,101 +141,56 @@ responsables de QUELQUE MANIÈRE QUE CE SOIT pour les conséquences de son utili
 
 ## 📚 Sources et Références
 
-Cette application s'appuie sur des données provenant de sources fiables et reconnues pour fournir des estimations réalistes du coût de la vie parisien et des comportements d'épargne.
+Cette application s'appuie sur des sources officielles ou institutionnelles (INSEE, Banque de France, Service-Public.fr, Île-de-France Mobilités, OLAP, Notaires du Grand Paris). Dernière vérification : 2 octobre 2026. Le dossier [sources/](sources/) contient le rapport de recherche et le tableau des données avec, pour chaque chiffre, son URL, sa date et son statut de vérification.
 
-### 💰 Coût de la Vie et Budget à Paris
+### Transport et Mobilité
 
-- [Studely - Budget étudiant Paris 2024](https://www.studely.com/fr/article/quel-budget-etudiant-pour-vivre-a-paris-en-2024/) [^1_1]
-- [Combien Coûte - Coût de la vie Paris](https://www.combien-coute.net/cout-de-la-vie/ile-de-france/paris/) [^1_2]
-- [Studapart - Coût de la vie France 2024](https://www.studapart.com/fr/nos-astuces/quel-est-le-cout-de-la-vie-en-france-en-2024) [^1_3]
-- [Déménagement24 - Coût de la vie Paris](https://www.demenagement24.com/blog/conseils/cout-de-la-vie-a-paris-tarifs-actuels/) [^1_4]
-- [RiaMoney - Coût de la vie France 2024](https://www.riamoneytransfer.com/fr/blog/cout-de-la-vie-en-france-en-2024-paris-marseille-lyon-nice/) [^1_32]
-- [LaFinancePourTous - Coût vie étudiante 2024](https://www.lafinancepourtous.com/2024/09/05/cout-de-la-vie-etudiante-la-rentree-2024-encore-synonyme-de-hausse/) [^1_33]
+- [Île-de-France Mobilités - Guide tarifaire — forfaits Navigo et tickets au 1er janvier 2026](https://www.iledefrance-mobilites.fr/medias/portail-idfm/acEkM5GXnQHGY2UT_IDFM_guide_tarifaire_A5_190326-2.pdf) (2026) — Navigo Mois : 90,80 € toutes zones, 88,80 € zones 2-3, 86,40 € zones 3-4, 84,40 € zones 4-5
+- [Île-de-France Mobilités - Titres et tarifs](https://www.iledefrance-mobilites.fr/titres-et-tarifs) (2026)
+- [Service-Public.fr - Remboursement des frais de transport domicile-travail](https://www.service-public.gouv.fr/particuliers/vosdroits/F19846) (févr. 2026) — Prise en charge employeur obligatoire de 50 % de l'abonnement
 
-### 🏠 Immobilier et Logement Paris
+### Loyers et Immobilier
 
-- [Studapart - Prix loyer Paris](https://www.studapart.com/fr/proprietaires/guides-proprietaires/prix-loyer-paris) [^1_5]
-- [Paris Rental - Location appartement Paris 2025](https://fr.parisrental.com/blog/tout-sur-la-location-meublee/le-cout-de-la-location-dun-appartement-a-paris-en-2025) [^1_7]
-- [Le Figaro Immobilier - Prix immobilier Paris](https://immobilier.lefigaro.fr/prix-immobilier/paris/ville-75056) [^1_9]
-- [SeLoger - Prix immobilier Île-de-France](https://www.seloger.com/prix-de-l-immo/vente/ile-de-france/paris.htm) [^1_10]
-- [Foncia - Prix m² Paris](https://fr.foncia.com/estimer-son-bien/prix-m2/paris-75) [^1_13]
-- [MeilleursAgents - Prix immobilier Paris](https://www.meilleursagents.com/prix-immobilier/paris-75000/) [^2_18]
-- [Hosman - Prix mètre carré Paris](https://www.hosman.co/blog/paris-prix-metre-carre) [^1_34]
-- [Notaires Paris - Carte des prix](https://paris.notaires.fr/fr/carte-des-prix) [^1_35]
+- [OLAP - Évolution en 2024 des loyers d'habitation du secteur locatif privé dans l'agglomération parisienne](https://www.observatoire-des-loyers.fr/sites/default/files/olap_documents/rapports_loyers/Rapport%20Paris%202025.pdf) (janv. 2025) — Loyer moyen hors charges : 26,3 €/m² à Paris, 19,1 €/m² en petite couronne, 15,6 €/m² en grande couronne ; emménagés récents : 28,3, 21,3 et 16,9 €/m²
+- [Observatoires locaux des loyers - Carte des niveaux de loyers — agglomération parisienne](https://www.observatoires-des-loyers.org/connaitre-les-loyers/carte-des-niveaux-de-loyers/agglomeration-parisienne-hors-paris) (2025)
+- [DRIHL Île-de-France - Arrêté n° IDF-2026-06-12-00003 fixant les loyers de référence pour la Ville de Paris](https://www.drihl.ile-de-france.developpement-durable.gouv.fr/renouvellement-2026-de-l-arrete-annuel-d-a1512.html?lang=fr) (juil. 2026) — Applicable du 1er juillet au 24 novembre 2026 (fin de l’expérimentation ELAN) ; loyer de référence majoré = référence + 20 %
+- [Ville de Paris - L'encadrement des loyers : comprendre le dispositif](https://www.paris.fr/pages/l-encadrement-des-loyers-comprendre-le-dispositif-29091) (2026)
+- [Notaires du Grand Paris - Conjoncture immobilière en Île-de-France au 2e trimestre 2026](https://paris.notaires.fr/fr/presse/communication-immobiliere-mensuelle/conjoncture-immobiliere-en-ile-de-france-au-2e-trimestre-2026) (T2 2026) — Appartements anciens : 9 560 €/m² à Paris, 6 130 €/m² en Île-de-France
+- [Notaires du Grand Paris - Le marché immobilier résidentiel ancien dans le Grand Paris — communiqué du 26 mars 2026](https://notairesdugrandparis.fr/sites/default/files/2026-03/Communiqu%C3%A9%20mensuel_2026-03_prix%20fin%20janvier%202026.pdf) (janv. 2026) — Appartements anciens : 9 570 €/m² à Paris, 4 910 €/m² en petite couronne, 3 190 €/m² en grande couronne
+- [Notaires du Grand Paris - Ventes immobilières : augmentation des droits d'enregistrement dans le Grand Paris](https://paris.notaires.fr/fr/actualites/ventes-immobilieres-augmentation-des-droits-denregistrement-dans-le-grand-paris) (mai 2025) — Frais et taxes d'acquisition proches de 8 % du prix ; taux départemental de 5 %, maintenu à 4,5 % pour les primo-accédants, jusqu'au 31 mars 2028
+- [Ville de Paris - Logement — Encadrement des loyers (open data)](https://opendata.paris.fr/explore/dataset/logement-encadrement-des-loyers/) (juil. 2025) — Loyers de référence par quartier, nombre de pièces et époque de construction, utilisés par le vérificateur de loyer
+- [Banque de France - Crédits aux particuliers — juillet 2026](https://www.banque-france.fr/fr/statistiques/credit/credits-aux-particuliers-2026-07) (juil. 2026) — Taux moyen des nouveaux crédits à l'habitat hors renégociations : 3,30 % (3,21 % en mai)
+- [Haut Conseil de stabilité financière - Mesure relative à l'octroi de crédits immobiliers](https://www.economie.gouv.fr/hcsf/mesures/mesure-relative-loctroi-de-credits-immobiliers) (2022) — Taux d'effort maximal de 35 %, durée maximale de 25 ans
 
-### 💼 Salaires et Revenus
+### Salaires et Revenus
 
-- [Journal du Net - Salaire Paris](https://www.journaldunet.com/business/salaire/paris/departement-75) [^1_6]
-- [HelloWorkplace - Salaire moyen région 2024](https://www.helloworkplace.fr/salaire-moyen-region-2024/) [^1_8]
-- [HelloWork - Salaire moyen France](https://www.hellowork.com/fr-fr/medias/salaire-moyen-france-secteurs-regions-metiers.html) [^2_3]
-- [News Entreprises - Salaire moyen France 2024](https://newsentreprises.com/salaire-moyen-france-2024/) [^2_7]
-- [Journal du Net - Salaire Île-de-France](https://www.journaldunet.com/business/salaire/ile-de-france/region-11) [^2_9]
-- [Early App - Salaire moyen France](https://early.app/fr/salaire-moyen/france/) [^2_10]
+- [INSEE - Salaire net mensuel moyen en EQTP par sexe et PCS dans le secteur privé — comparaisons départementales](https://www.insee.fr/fr/statistiques/2012733) (2024) — Paris : 3 836 € (cadres 5 663 €, professions intermédiaires 2 842 €, employés 2 112 €) ; Île-de-France : 3 479 € ; France : 2 733 €
+- [INSEE - Les salaires dans le secteur privé en 2024 — Insee Première n° 2079](https://www.insee.fr/fr/statistiques/8657156) (2024) — Par âge (France) : 1 865 € avant 25 ans, 2 567 € de 25 à 39 ans, 3 009 € de 40 à 49 ans, 3 267 € à 55 ans et plus
+- [INSEE - L'essentiel sur... les salaires](https://www.insee.fr/fr/statistiques/7457170) (2024)
 
-### 🚊 Transport et Mobilité
+### Produits d'Épargne et Fiscalité
 
-- [Île-de-France Mobilités - Titres et tarifs](https://www.iledefrance-mobilites.fr/titres-et-tarifs) [^1_24]
-- [IDF Mobilités - Forfait Navigo mensuel](https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-mois) [^1_25]
-- [IDF Mobilités - Forfait Navigo annuel](https://www.iledefrance-mobilites.fr/titres-et-tarifs/detail/forfait-navigo-annuel) [^1_26]
-- [Capital - Pass Navigo guide](https://www.capital.fr/conso/pass-navigo-demarche-forfait-et-prix-1476764) [^1_27]
-- [RideMotto - Meilleurs transports Paris](https://blog.ridemotto.com/meilleurs-moyens-transport-paris/) [^1_29]
+- [Service-Public.fr - Livret A](https://www.service-public.gouv.fr/particuliers/vosdroits/F2365) (août 2026) — 1,7 % du 1er août 2026 au 31 janvier 2027, plafond 22 950 € (même taux pour le LDDS)
+- [Service-Public.fr - Livret d'épargne populaire (LEP)](https://www.service-public.gouv.fr/particuliers/vosdroits/F2367) (août 2026) — 2,5 %, plafond 10 000 €, revenu fiscal de référence ≤ 23 028 € pour 1 part
+- [Service-Public.fr - Plan épargne logement (PEL)](https://www.service-public.gouv.fr/particuliers/vosdroits/F16140) (sept. 2026) — 2 % pour les PEL ouverts depuis le 1er janvier 2026, plafond 61 200 €
+- [Service-Public.fr - Prélèvements sociaux sur les revenus du patrimoine et de placements](https://www.service-public.gouv.fr/particuliers/vosdroits/F2329) (2026) — Prélèvement forfaitaire unique de 31,4 % depuis 2026 (30 % maintenu pour assurance-vie, PEL et CEL)
+- [Banque de France — Mes questions d'argent - Une épargne de précaution : pourquoi et comment faire ?](https://www.mesquestionsdargent.fr/epargne-et-placements/epargne-de-precaution) (2026) — 3 à 6 mois de revenus
 
-### 💰 Épargne et Comportements Financiers
+### Épargne des Ménages
 
-- [Banque de France - Épargne ménages Q2 2024](https://www.banque-france.fr/fr/statistiques/epargne/epargne-des-menages-2024-q2) [^1_37]
-- [Banque de France - Épargne ménages Q3 2024](https://www.banque-france.fr/fr/statistiques/epargne/epargne-des-menages-2024-q3) [^1_38]
-- [LaFinancePourTous - Taux épargne français 2024](https://www.lafinancepourtous.com/2025/06/04/le-taux-depargne-des-francais-atteint-18-fin-2024/) [^1_17]
-- [FBF - Épargne ménages faits et chiffres](https://www.fbf.fr/fr/lepargne-des-menages-faits-et-chiffres-cles/) [^1_16]
-- [Ramify - Épargne moyenne français](https://www.ramify.fr/epargne/epargne-moyenne-des-francais) [^1_18]
-- [Club Patrimoine - Taux épargne ménages France](https://www.clubpatrimoine.com/contenus/graph-taux-epargne-menages-france) [^2_22]
-- [L'Assurance en Mouvement - Bilan épargne 2024](https://www.lassuranceenmouvement.com/2024/11/14/la-france-un-peuple-depargnants-bilan-2024/) [^2_23]
+- [INSEE - Comptes nationaux trimestriels — Informations rapides n° 212](https://www.insee.fr/fr/statistiques/9039499) (T2 2026) — Taux d'épargne des ménages : 17,2 % du revenu disponible brut (17,9 % au T1)
+- [Banque de France - Épargne des ménages — 2026 T1](https://www.banque-france.fr/fr/statistiques/epargne/epargne-des-menages-2026-q1) (T1 2026) — Taux d'épargne financière : 9,5 % (5,8 % en zone euro)
+- [INSEE - Consommation et épargne par catégories de ménages](https://www.insee.fr/fr/statistiques/8272803?sommaire=8071406) (2022) — Taux d'épargne de -29 % pour les 20 % les plus modestes à 27 % pour les 20 % les plus aisés
+- [Autorité des marchés financiers - Baromètre de l'épargne et de l'investissement 2025](https://www.amf-france.org/sites/institutionnel/files/private/2025-12/barometre-amf-2025.pdf) (2025) — 42 % des moins de 35 ans acceptent une part de risque sur leurs placements
 
-### 👥 Comportements par Génération
+### Prix et Coût de la Vie
 
-- [Business Cool - Comportement financier Gen Z](https://business-cool.com/decryptage/analyse/generation-z-quel-est-leur-comportement-financier/) [^2_4]
-- [Forbes - Habitudes dépense épargne Gen Z](https://www.forbes.fr/business/les-habitudes-de-depense-et-depargne-de-la-generation-z-et-leur-effet-sur-les-services-financiers/) [^2_6]
-- [MyLittleMoney - Stratégies placement Millennials](https://mylittlemoney.com/2017/11/22/epargne-les-droles-de-strategies-de-placement-des-millennials/) [^2_11]
-- [MySweetImmo - Millennials meilleurs épargnants](https://www.mysweetimmo.com/2023/02/27/epargne-les-millenials-sont-les-meilleurs-epargnants-de-france-toutes-generations-confondues/) [^2_17]
-- [Natixis - Génération X inquiétudes retraite](https://www.im.natixis.com/fr-fr/about/newsroom/press-releases/2024/pres-du-tiers-des-membres-de-la-generation-x-s-inquiete-de-ne-pas-pouvoir-prendre-sa-retraite) [^2_15]
-- [AllNews - Évolution préférences investissement générations](https://www.allnews.ch/content/points-de-vue/l'évolution-des-préférences-d'investissement-des-«boomers»-à-la-«genz») [^2_16]
-
-### 📊 Données Statistiques INSEE
-
-- [INSEE - Statistiques revenus patrimoine](https://www.insee.fr/fr/statistiques/5650198) [^2_5]
-- [INSEE - Outil interactif économie](https://www.insee.fr/fr/outil-interactif/5367857/details/10_ECC/11_ECO/11E_Figure5) [^2_30]
-- [INSEE - Statistiques épargne 2024](https://www.insee.fr/fr/statistiques/7457170) [^2_32]
-
-### 🏦 Assurances et Charges
-
-- [Le Figaro - Assurance habitation Paris](https://immobilier.lefigaro.fr/article/la-ville-de-paris-lance-une-assurance-habitation-a-prix-casses_fac4af5e-697a-11ed-845d-0f540038713c/) [^1_11]
-- [Ma-Nego - Prix charges copropriété Paris](https://www.ma-nego.fr/2024/09/03/les-prix-des-charges-de-copropriete-a-paris-ce-quil-faut-savoir/) [^1_12]
-- [VYV Conseil - Assurance habitation Paris](https://vyv-conseil.fr/nos-assurances/assurance-habitation-paris/) [^1_14]
-- [LiberKeys - Charges locatives Paris](https://www.liberkeys.com/blog/top-3-arrondissements-charges-locatives-elevees-paris) [^1_15]
-
-### 🎯 Conseils et Optimisation Budget
-
-- [Linxea - Épargner petit budget](https://www.linxea.com/tout-savoir-sur/epargne/comment-epargner-avec-un-petit-budget/) [^1_19]
-- [Mes Questions d'Argent - Astuces économies](https://www.mesquestionsdargent.fr/budget/comment-faire-des-economies/astuces-economies-accessible) [^1_22]
-- [CBNews - 56% français vivent au-dessus moyens](https://www.cbnews.fr/cb/image-epargne-enquete-yomoni-buzzpress-devoilent-que-56-francais-vivent-au-dessus-leurs-moyens) [^1_23]
-- [Blog Nalo - État lieux épargne français](https://blog.nalo.fr/etat-des-lieux-previsions-epargne-des-francais/) [^1_21]
-
-### 🏡 Investissement et Patrimoine
-
-- [Pretto - Âge investir immobilier](https://www.pretto.fr/investissement-locatif/investissement-immobilier/age-investir-immobilier/) [^2_25]
-- [PraxiFinance - Âge devenir propriétaire](https://www.praxifinance.fr/actualite/a-quel-age-devient-on-proprietaire) [^2_21]
-- [iSélection - Investissement locatif selon âge](https://www.iselection.com/b2c/conseils-investir/investissement-immobilier-locatif-selon-age/) [^2_27]
-- [Ramify - Combien avoir côté 50 ans](https://www.ramify.fr/epargne/combien-avoir-de-cote-a-50-ans) [^2_28]
-
-### 📈 Études et Baromètres
-
-- [IFOP - Baromètre épargne 2024](https://www.ifop.com/publication/barometre-2024-de-lepargne-en-france-et-en-regions/) [^2_31]
-- [Altaprofits - Baromètre Hauts-de-France](https://www.altaprofits.com/documentation/pdf/ESPACEPRESSE/septembre2024/CP-IFOP-Altaprofits-Barometre2024-Hauts-de-France.pdf) [^2_2]
-- [Natixis - Gen X Report](https://www.im.natixis.com/fr-fr/insights/investor-sentiment/2024/gen-x-report) [^2_33]
-- [Yomoni - Épargne ou style de vie](https://blog.yomoni.fr/epargne-ou-style-de-vie/) [^2_34]
+- [INSEE - Indice des prix à la consommation — estimation provisoire, Informations rapides n° 242](https://www.insee.fr/fr/statistiques/9056956) (sept. 2026) — Inflation de 3,0 % sur un an
+- [INSEE - Les comportements de consommation en 2017 — enquête Budget de famille, Insee Première n° 1749](https://www.insee.fr/fr/statistiques/4127596) (2017) — L'alimentation représente 14 % du budget des ménages de l'agglomération parisienne ; aucun montant mensuel officiel n'existe, prochains résultats attendus en 2028
 
 ---
 
-**Note :** Toutes les données utilisées dans cette application proviennent de sources publiques et officielles. Les calculs et recommandations sont basés sur ces références mais ne constituent pas des conseils financiers personnalisés.
+**Note :** Les taux d'épargne recommandés par âge, le budget alimentaire estimé (350 €/mois) et la règle 50/30/20 sont des hypothèses de l'application et non des chiffres officiels. Les calculs ne constituent pas des conseils financiers personnalisés.
 
 ---
 

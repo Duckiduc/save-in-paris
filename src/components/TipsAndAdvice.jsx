@@ -1,14 +1,23 @@
-import { Card, List, Typography, Tag, Space, Divider } from "antd";
+import { Check, House, PiggyBank, TrainFront } from "lucide-react";
 import {
-  BulbOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
-  DollarOutlined,
-  HomeOutlined,
-  CarOutlined,
-} from "@ant-design/icons";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
+import { Notice } from "@/components/shared";
 
-const { Title, Text, Paragraph } = Typography;
+const TipList = ({ tips }) => (
+  <ul className="flex flex-col gap-1.5">
+    {tips.map((tip) => (
+      <li key={tip} className="flex items-start gap-2">
+        <Check className="mt-0.5 size-4 shrink-0 text-success" />
+        {tip}
+      </li>
+    ))}
+  </ul>
+);
 
 const TipsAndAdvice = ({ userProfile, results }) => {
   const getAgeSpecificAdvice = (ageRange) => {
@@ -108,8 +117,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
 
     if (!results?.canSave) {
       warnings.push({
-        type: "error",
-        icon: <WarningOutlined />,
+        tone: "error",
         message: "Attention : Vos dépenses dépassent vos revenus",
         advice: "Réduisez vos charges ou augmentez vos revenus en priorité",
       });
@@ -117,8 +125,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
 
     if (results?.actualSavingsRate < 0.1) {
       warnings.push({
-        type: "warning",
-        icon: <WarningOutlined />,
+        tone: "warning",
         message: "Taux d'épargne faible (moins de 10%)",
         advice:
           "Analysez vos dépenses non-essentielles et optimisez votre budget",
@@ -127,8 +134,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
 
     if (results?.savingsGap > 500) {
       warnings.push({
-        type: "info",
-        icon: <BulbOutlined />,
+        tone: "info",
         message: "Écart important avec l'objectif d'épargne",
         advice:
           "Considérez un changement de logement ou une augmentation de revenus",
@@ -141,7 +147,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
   const generalTips = [
     {
       category: "Logement",
-      icon: <HomeOutlined />,
+      icon: House,
       tips: [
         "Le logement ne devrait pas dépasser 33% de vos revenus",
         "Négociez votre loyer lors du renouvellement",
@@ -151,7 +157,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
     },
     {
       category: "Transport",
-      icon: <CarOutlined />,
+      icon: TrainFront,
       tips: [
         "Profitez du remboursement employeur (50% minimum)",
         "Combinez vélo et transports en commun",
@@ -161,7 +167,7 @@ const TipsAndAdvice = ({ userProfile, results }) => {
     },
     {
       category: "Épargne",
-      icon: <DollarOutlined />,
+      icon: PiggyBank,
       tips: [
         "Automatisez vos virements d'épargne",
         "Diversifiez vos placements selon votre âge",
@@ -180,118 +186,56 @@ const TipsAndAdvice = ({ userProfile, results }) => {
   const warnings = results ? getFinancialWarnings(results) : [];
 
   return (
-    <Space direction="vertical" size="large" style={{ width: "100%" }}>
-      {warnings.length > 0 && (
-        <Card title="Points d'attention" size="small">
-          <List
-            size="small"
-            dataSource={warnings}
-            renderItem={(warning) => (
-              <List.Item style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-                <List.Item.Meta
-                  avatar={warning.icon}
-                  title={
-                    <span style={{ color: "rgba(255, 255, 255, 0.95)" }}>
-                      {warning.message}
-                    </span>
-                  }
-                  description={
-                    <span style={{ color: "rgba(255, 255, 255, 0.8)" }}>
-                      {warning.advice}
-                    </span>
-                  }
-                />
-              </List.Item>
-            )}
-          />
-        </Card>
-      )}
+    <div className="flex flex-col gap-4">
+      {warnings.map((warning) => (
+        <Notice key={warning.message} tone={warning.tone} title={warning.message}>
+          {warning.advice}
+        </Notice>
+      ))}
 
-      {ageAdvice && (
-        <Card title={ageAdvice.title} size="small">
-          <Space direction="vertical" size="small" style={{ width: "100%" }}>
-            <div>
-              <Tag color="blue">Objectif : {ageAdvice.savingsTarget}</Tag>
-              <Tag color="green">Priorité : {ageAdvice.priority}</Tag>
-            </div>
-            <List
-              size="small"
-              dataSource={ageAdvice.tips}
-              renderItem={(tip) => (
-                <List.Item style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-                  <CheckCircleOutlined
-                    style={{ color: "#52c41a", marginRight: 8 }}
-                  />
-                  <span style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-                    {tip}
-                  </span>
-                </List.Item>
-              )}
-            />
-          </Space>
-        </Card>
-      )}
-
-      {locationTips.length > 0 && (
-        <Card title="Conseils spécifiques à votre zone" size="small">
-          <List
-            size="small"
-            dataSource={locationTips}
-            renderItem={(tip) => (
-              <List.Item style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-                <BulbOutlined style={{ color: "#faad14", marginRight: 8 }} />
-                <span style={{ color: "rgba(255, 255, 255, 0.9)" }}>{tip}</span>
-              </List.Item>
-            )}
-          />
-        </Card>
-      )}
-
-      <Card title="Conseils généraux" size="small">
-        {generalTips.map((category, index) => (
-          <div key={index}>
-            <Title level={5} style={{ color: "rgba(255, 255, 255, 0.95)" }}>
-              {category.icon} {category.category}
-            </Title>
-            <List
-              size="small"
-              dataSource={category.tips}
-              renderItem={(tip) => (
-                <List.Item
-                  style={{ paddingLeft: 24, color: "rgba(255, 255, 255, 0.9)" }}
-                >
-                  <span style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-                    • {tip}
-                  </span>
-                </List.Item>
-              )}
-            />
-            {index < generalTips.length - 1 && <Divider />}
-          </div>
+      <Accordion
+        type="multiple"
+        defaultValue={ageAdvice ? ["age"] : ["general-0"]}
+      >
+        {ageAdvice && (
+          <AccordionItem value="age">
+            <AccordionTrigger>{ageAdvice.title}</AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-3">
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary">
+                  Objectif : {ageAdvice.savingsTarget}
+                </Badge>
+                <Badge variant="secondary">
+                  Priorité : {ageAdvice.priority}
+                </Badge>
+              </div>
+              <TipList tips={ageAdvice.tips} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
+        {locationTips.length > 0 && (
+          <AccordionItem value="zone">
+            <AccordionTrigger>Conseils pour votre zone</AccordionTrigger>
+            <AccordionContent>
+              <TipList tips={locationTips} />
+            </AccordionContent>
+          </AccordionItem>
+        )}
+        {generalTips.map(({ category, icon: Icon, tips }, index) => (
+          <AccordionItem key={category} value={`general-${index}`}>
+            <AccordionTrigger>
+              <span className="flex items-center gap-2">
+                <Icon className="size-4 text-muted-foreground" />
+                {category}
+              </span>
+            </AccordionTrigger>
+            <AccordionContent>
+              <TipList tips={tips} />
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </Card>
-
-      <Card title="Règle des 50/30/20 adaptée à Paris" size="small">
-        <Paragraph style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-          <Text strong style={{ color: "rgba(255, 255, 255, 0.95)" }}>
-            50% maximum
-          </Text>{" "}
-          pour les dépenses essentielles (logement, transport, alimentation)
-        </Paragraph>
-        <Paragraph style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-          <Text strong style={{ color: "rgba(255, 255, 255, 0.95)" }}>
-            30% maximum
-          </Text>{" "}
-          pour les loisirs et dépenses personnelles
-        </Paragraph>
-        <Paragraph style={{ color: "rgba(255, 255, 255, 0.9)" }}>
-          <Text strong style={{ color: "rgba(255, 255, 255, 0.95)" }}>
-            20% minimum
-          </Text>{" "}
-          pour l&apos;épargne et investissements
-        </Paragraph>
-      </Card>
-    </Space>
+      </Accordion>
+    </div>
   );
 };
 

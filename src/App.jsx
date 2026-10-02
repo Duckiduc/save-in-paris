@@ -1,40 +1,98 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BadgeCheck, BookOpen, PiggyBank, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Layout,
-  Typography,
-  Card,
-  Row,
-  Col,
-  Divider,
-  FloatButton,
-  Tabs,
-  Modal,
-  Button,
-  Checkbox,
-} from "antd";
-import {
-  CalculatorOutlined,
-  InfoCircleOutlined,
-  LineChartOutlined,
-  BookOutlined,
-  HomeOutlined,
-  CarOutlined,
-  ShoppingOutlined,
-  BankOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Toaster } from "@/components/ui/sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Section } from "@/components/shared";
 import SavingsCalculator from "./components/SavingsCalculator";
 import ResultsDisplay from "./components/ResultsDisplay";
 import TipsAndAdvice from "./components/TipsAndAdvice";
 import DataVisualization from "./components/DataVisualization";
 import SavingsProjection from "./components/SavingsProjection";
 import GuideInfo from "./components/GuideInfo";
-import MobileOptimizations from "./components/MobileOptimizations";
 import Sources from "./components/Sources";
-import "./App.css";
+import EmergencyFund from "./components/EmergencyFund";
+import PeerComparison from "./components/PeerComparison";
+import WhatIfSimulator from "./components/WhatIfSimulator";
+import ProductAllocator from "./components/ProductAllocator";
+import HomePurchaseSimulator from "./components/HomePurchaseSimulator";
+import RentCapChecker from "./components/RentCapChecker";
 
-const { Header, Content, Footer } = Layout;
-const { Title, Paragraph } = Typography;
+const GUIDE_TABS = [
+  { key: "overview", label: "Repères" },
+  { key: "housing", label: "Logement" },
+  { key: "transport", label: "Transport" },
+  { key: "food", label: "Alimentation" },
+  { key: "savings", label: "Épargne" },
+  { key: "warnings", label: "Erreurs à éviter" },
+];
+
+const LEGAL_NOTICES = [
+  {
+    title: "Projet open source",
+    text: "Ce calculateur est un projet open source fourni « en l'état », sans aucune garantie expresse ou implicite. Le code source est disponible publiquement et peut être modifié par des tiers.",
+  },
+  {
+    title: "Usage informatif uniquement",
+    text: "Les calculs, estimations, conseils et informations fournis sont à des fins éducatives et informatives uniquement. Ils ne constituent en aucun cas des conseils financiers, juridiques, fiscaux ou d'investissement personnalisés.",
+  },
+  {
+    title: "Exclusion de responsabilité",
+    text: "L'auteur, les contributeurs et les hébergeurs déclinent toute responsabilité pour les pertes, dommages, erreurs ou conséquences résultant de l'utilisation de ce calculateur ou des décisions prises sur la base de ses résultats.",
+  },
+  {
+    title: "Données et précision",
+    text: "Les données utilisées proviennent de sources publiques et peuvent être inexactes, obsolètes ou non représentatives de votre situation. Les résultats sont des estimations approximatives et ne garantissent aucun résultat financier futur.",
+  },
+  {
+    title: "Conseil professionnel recommandé",
+    text: "Consultez toujours un conseiller financier agréé, un expert-comptable ou un notaire avant toute décision financière importante. Cet outil ne remplace pas un accompagnement professionnel personnalisé.",
+  },
+  {
+    title: "Limitation de garantie",
+    text: "Aucune garantie n'est donnée quant à la disponibilité, la sécurité, l'exactitude ou la performance de ce service. L'utilisateur assume tous les risques liés à son utilisation.",
+  },
+  {
+    title: "Acceptation des conditions",
+    text: "En utilisant ce service, vous acceptez intégralement ces conditions, reconnaissez avoir été informé(e) de ces limitations et déchargez les créateurs de toute responsabilité. Si vous n'acceptez pas ces conditions, cessez immédiatement d'utiliser ce service.",
+  },
+];
+
+// Onglets à défilement horizontal sur mobile
+const ScrollTabs = ({ tabs }) => (
+  <div className="-mx-4 overflow-x-auto px-4 py-1 print:hidden">
+    <TabsList className="h-10! rounded-full border bg-card p-1 shadow-sm">
+      {tabs.map(({ key, label }) => (
+        <TabsTrigger
+          key={key}
+          value={key}
+          className="rounded-full px-4 data-active:bg-primary! data-active:text-primary-foreground! data-active:shadow-sm"
+        >
+          {label}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  </div>
+);
+
+const Empty = ({ children }) => (
+  <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed bg-card/60 p-10 text-center text-sm text-muted-foreground">
+    <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <Sparkles className="size-5" />
+    </span>
+    {children}
+  </div>
+);
 
 function App() {
   const [calculationResults, setCalculationResults] = useState(null);
@@ -42,6 +100,7 @@ function App() {
   const [legalModalVisible, setLegalModalVisible] = useState(false);
   const [sourcesModalVisible, setSourcesModalVisible] = useState(false);
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
+  const resultsRef = useRef(null);
 
   useEffect(() => {
     // Check if user has already accepted terms in this session
@@ -58,490 +117,307 @@ function App() {
     }
   };
 
-  const handleCalculationComplete = (results, profile) => {
+  const handleCalculationComplete = (results, profile, { scroll } = {}) => {
     setCalculationResults(results);
     setUserProfile(profile);
+    if (scroll && window.matchMedia("(max-width: 1023px)").matches) {
+      requestAnimationFrame(() =>
+        resultsRef.current?.scrollIntoView({ behavior: "smooth" })
+      );
+    }
   };
 
-  // Define tabs items for the modern Tabs API
-  const tabItems = [
-    {
-      key: "housing",
-      label: (
-        <span>
-          <HomeOutlined /> Logement
-        </span>
-      ),
-      children: <GuideInfo section="housing" userProfile={userProfile} />,
-    },
-    {
-      key: "transport",
-      label: (
-        <span>
-          <CarOutlined /> Transport
-        </span>
-      ),
-      children: <GuideInfo section="transport" userProfile={userProfile} />,
-    },
-    {
-      key: "food",
-      label: (
-        <span>
-          <ShoppingOutlined /> Alimentation
-        </span>
-      ),
-      children: <GuideInfo section="food" userProfile={userProfile} />,
-    },
-    {
-      key: "savings",
-      label: (
-        <span>
-          <BankOutlined /> Épargne
-        </span>
-      ),
-      children: <GuideInfo section="savings" userProfile={userProfile} />,
-    },
-    {
-      key: "warnings",
-      label: (
-        <span>
-          <WarningOutlined /> Erreurs à Éviter
-        </span>
-      ),
-      children: <GuideInfo section="warnings" userProfile={userProfile} />,
-    },
+  const ready = calculationResults && userProfile;
+  const inputsKey = ready ? JSON.stringify(userProfile.inputs) : "";
+  const needsForm = (
+    <Empty>Remplissez le formulaire pour utiliser cet outil.</Empty>
+  );
+
+  const toolTabs = [
+    { key: "whatif", label: "Et si... ?" },
+    { key: "savings", label: "Mon épargne" },
+    { key: "projection", label: "Projection" },
+    { key: "purchase", label: "Projet d'achat" },
+    { key: "salary", label: "Mon salaire" },
+    { key: "rent", label: "Encadrement du loyer" },
   ];
 
   return (
-    <Layout className="layout">
-      <MobileOptimizations />
-      
-      <Header className="header">
-        <div className="header-content">
-          <CalculatorOutlined className="logo-icon" />
-          <Title level={2} className="header-title">
-            Calculateur d&apos;Épargne Paris
-          </Title>
+    <div className="page-backdrop min-h-svh">
+      <header className="sticky top-0 z-40 border-b bg-background/70 backdrop-blur-lg print:hidden">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+          <span className="flex items-center gap-2.5 font-semibold tracking-tight">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-brand text-white shadow-sm shadow-primary/30">
+              <PiggyBank className="size-4.5" />
+            </span>
+            Épargne Paris
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSourcesModalVisible(true)}
+          >
+            <BookOpen data-icon="inline-start" />
+            Sources
+          </Button>
         </div>
-      </Header>
+      </header>
 
-      <Content className="content">
-        <div className="hero-section">
-          <Title level={1} className="hero-title">
-            Optimisez votre épargne à Paris
-          </Title>
-          <Paragraph className="hero-description">
-            Calculez votre capacité d&apos;épargne en tenant compte du coût de
-            la vie parisien.
-          </Paragraph>
-
-          {/* Guide Overview Section */}
-          <GuideInfo section="overview" userProfile={userProfile} />
+      <main className="mx-auto flex max-w-6xl flex-col gap-12 px-4 py-10">
+        <div className="flex max-w-3xl animate-in flex-col items-start gap-4 pt-4 duration-700 fade-in slide-in-from-bottom-3">
+          <button
+            type="button"
+            onClick={() => setSourcesModalVisible(true)}
+            className="flex items-center gap-1.5 rounded-full border bg-card/80 px-3 py-1 text-xs font-medium shadow-sm transition-colors hover:border-primary/40"
+          >
+            <BadgeCheck className="size-3.5 text-primary" />
+            Données officielles vérifiées en octobre 2026
+          </button>
+          <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+            Combien pouvez‑vous épargner{" "}
+            <span className="text-gradient">à Paris</span> ?
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Un calcul de votre capacité d&apos;épargne à partir des loyers,
+            salaires et tarifs officiels d&apos;Île-de-France.
+          </p>
         </div>
 
-        <Row gutter={[24, 24]} className="main-content">
-          <Col xs={24} lg={12}>
-            <Card
-              title={
-                <span>
-                  <CalculatorOutlined /> Calculateur d&apos;Épargne
-                </span>
-              }
-              className="calculator-card"
-            >
-              <SavingsCalculator
-                onCalculationComplete={handleCalculationComplete}
-              />
-            </Card>
-          </Col>
-
-          <Col xs={24} lg={12}>
-            {calculationResults ? (
-              <ResultsDisplay
-                results={calculationResults}
-                userProfile={userProfile}
-              />
-            ) : (
-              <Card
-                title={
-                  <span>
-                    <InfoCircleOutlined /> Vos Résultats
-                  </span>
-                }
-                className="results-placeholder"
-              >
-                <Paragraph className="placeholder-text">
-                  Remplissez le formulaire
-                </Paragraph>
-              </Card>
-            )}
-          </Col>
-        </Row>
-
-        <Divider />
-
-        {/* Guide Information Tabs Section */}
-        <Row gutter={[24, 24]} className="guide-section">
-          <Col xs={24}>
-            <Card
-              title={
-                <span>
-                  <BookOutlined /> Guide Complet d&apos;Épargne à Paris
-                </span>
-              }
-              className="guide-card"
-            >
-              <Tabs defaultActiveKey="housing" centered items={tabItems} />
-            </Card>
-          </Col>
-        </Row>
-
-        <Divider />
-
-        <Row gutter={[24, 24]} className="tips-section">
-          <Col xs={24} lg={12}>
-            <Card
-              title={
-                <span>
-                  <LineChartOutlined /> Données de Référence
-                </span>
-              }
-            >
-              <DataVisualization userProfile={userProfile} />
-            </Card>
-          </Col>
-
-          <Col xs={24} lg={12}>
-            <Card
-              title={
-                <span>
-                  <InfoCircleOutlined /> Conseils & Recommandations
-                </span>
-              }
-              className="tips-section"
-            >
-              <TipsAndAdvice
-                userProfile={userProfile}
-                results={calculationResults}
-              />
-            </Card>
-          </Col>
-        </Row>
-
-        {calculationResults && calculationResults.canSave && (
-          <>
-            <Divider />
-            <Row gutter={[24, 24]} className="full-width-section">
-              <Col xs={24}>
-                <SavingsProjection
-                  monthlySavings={calculationResults.disposableIncome}
-                  userAge={
-                    userProfile
-                      ? parseInt(userProfile.ageRange.split("-")[0])
-                      : 30
-                  }
-                />
-              </Col>
-            </Row>
-          </>
-        )}
-      </Content>
-
-      <Footer className="footer">
-        <div className="footer-content">
-          <div style={{ textAlign: "center", marginBottom: "16px" }}>
-            <Paragraph
-              style={{ color: "rgba(255, 255, 255, 0.7)", margin: "0 0 8px 0" }}
-            >
-              © 2025 Calculateur d&apos;Épargne Paris - Optimisez votre budget
-              parisien
-            </Paragraph>
-            <Divider
-              style={{
-                margin: "12px 0",
-                borderColor: "rgba(255, 255, 255, 0.2)",
-              }}
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <Section title="Votre situation" className="print:hidden">
+            <SavingsCalculator
+              onCalculationComplete={handleCalculationComplete}
             />
-            <div
-              style={{
-                background: "rgba(255, 193, 7, 0.1)",
-                border: "1px solid rgba(255, 193, 7, 0.3)",
-                borderRadius: "8px",
-                padding: "16px",
-                maxWidth: "900px",
-                margin: "0 auto",
-              }}
-            >
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.85)",
-                  margin: "0 0 12px 0",
-                  fontSize: "13px",
-                  lineHeight: "1.5",
-                  fontWeight: 600,
-                }}
-              >
-                <WarningOutlined
-                  style={{ color: "#faad14", marginRight: "8px" }}
+          </Section>
+          <div ref={resultsRef} className="scroll-mt-20 lg:sticky lg:top-20">
+            {ready ? (
+              <div className="animate-in duration-500 fade-in slide-in-from-bottom-3">
+                <ResultsDisplay
+                  results={calculationResults}
+                  userProfile={userProfile}
                 />
-                <strong>AVIS LÉGAL ET LIMITATION DE RESPONSABILITÉ</strong>
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Projet Open Source :</strong> Ce calculateur est un
-                projet open source fourni &quot;EN L&apos;ÉTAT&quot; sans aucune
-                garantie expresse ou implicite. Le code source est disponible
-                publiquement et peut être modifié par des tiers.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Usage Informatif Uniquement :</strong> Les calculs,
-                estimations, conseils et informations fournis sont à des fins
-                éducatives et informatives uniquement. Ils ne constituent en
-                aucun cas des conseils financiers, juridiques, fiscaux ou
-                d&apos;investissement personnalisés.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Exclusion de Responsabilité :</strong> L&apos;auteur,
-                les contributeurs et les hébergeurs DÉCLINENT TOUTE
-                RESPONSABILITÉ pour les pertes, dommages, erreurs ou
-                conséquences résultant de l&apos;utilisation de ce calculateur
-                ou des décisions prises sur la base de ses résultats.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Données et Précision :</strong> Les données utilisées
-                proviennent de sources publiques et peuvent être inexactes,
-                obsolètes ou non représentatives de votre situation. Les
-                résultats sont des estimations approximatives et ne garantissent
-                aucun résultat financier futur.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Conseil Professionnel Recommandé :</strong> Consultez
-                TOUJOURS un conseiller financier agréé, un expert-comptable ou
-                un notaire avant toute décision financière importante. Cet outil
-                ne remplace pas un accompagnement professionnel personnalisé.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0 0 8px 0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Limitation de Garantie :</strong> AUCUNE GARANTIE
-                n&apos;est donnée quant à la disponibilité, la sécurité,
-                l&apos;exactitude ou la performance de ce service.
-                L&apos;utilisateur assume tous les risques liés à son
-                utilisation.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.8)",
-                  margin: "0",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                }}
-              >
-                <strong>Acceptation des Conditions :</strong> En utilisant ce
-                service, vous acceptez intégralement ces conditions,
-                reconnaissez avoir été informé(e) de ces limitations et
-                déchargez les créateurs de toute responsabilité. Si vous
-                n&apos;acceptez pas ces conditions, cessez immédiatement
-                d&apos;utiliser ce service.
-              </Paragraph>
-
-              <Paragraph
-                style={{
-                  color: "rgba(255, 255, 255, 0.6)",
-                  margin: "8px 0 0 0",
-                  fontSize: "10px",
-                  lineHeight: "1.3",
-                  textAlign: "center",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-                  paddingTop: "8px",
-                }}
-              >
-                📋 Conditions d&apos;utilisation complètes disponibles dans le
-                fichier LEGAL.md du projet
-              </Paragraph>
-            </div>
-            
-            {/* Sources Link in Footer */}
-            <div style={{ textAlign: 'center', marginTop: '16px' }}>
-              <Button 
-                type="link" 
-                icon={<BookOutlined />}
-                onClick={() => setSourcesModalVisible(true)}
-                style={{ 
-                  color: 'rgba(120, 219, 255, 0.8)', 
-                  fontSize: '12px',
-                  height: 'auto',
-                  padding: '4px 8px'
-                }}
-              >
-                📚 Consulter les sources et références
-              </Button>
-            </div>
+              </div>
+            ) : (
+              <Empty>
+                Vos résultats apparaîtront ici une fois le formulaire rempli.
+              </Empty>
+            )}
           </div>
         </div>
-      </Footer>
 
-      <FloatButton.BackTop />
-      
-      {/* Sources Button */}
-      <FloatButton
-        icon={<BookOutlined />}
-        onClick={() => setSourcesModalVisible(true)}
-        style={{
-          bottom: 80,
-          right: 24,
-          background: 'rgba(10, 11, 13, 0.9)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(120, 219, 255, 0.3)',
-          color: '#78dbff',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)'
-        }}
-        className="sources-float-button"
-      />
+        <section className="flex flex-col gap-4">
+          <h2 className="text-xl font-semibold tracking-tight">Outils</h2>
+          <Tabs defaultValue="whatif" className="gap-4">
+            <ScrollTabs tabs={toolTabs} />
+            <TabsContent className="animate-in duration-300 fade-in" value="whatif">
+              {ready ? (
+                <WhatIfSimulator
+                  key={inputsKey}
+                  results={calculationResults}
+                  userProfile={userProfile}
+                />
+              ) : (
+                needsForm
+              )}
+            </TabsContent>
+            <TabsContent className="animate-in duration-300 fade-in" value="savings">
+              {ready ? (
+                <div className="grid items-start gap-6 lg:grid-cols-2">
+                  <EmergencyFund
+                    results={calculationResults}
+                    userProfile={userProfile}
+                  />
+                  <ProductAllocator
+                    key={inputsKey}
+                    results={calculationResults}
+                    userProfile={userProfile}
+                  />
+                </div>
+              ) : (
+                needsForm
+              )}
+            </TabsContent>
+            <TabsContent className="animate-in duration-300 fade-in" value="projection">
+              {ready ? (
+                <SavingsProjection
+                  monthlySavings={calculationResults.disposableIncome}
+                  initialBalance={userProfile.currentSavings}
+                  userAge={parseInt(userProfile.ageRange)}
+                />
+              ) : (
+                needsForm
+              )}
+            </TabsContent>
+            <TabsContent className="animate-in duration-300 fade-in" value="purchase">
+              {ready ? (
+                <HomePurchaseSimulator
+                  key={`${userProfile.location}-${userProfile.housingType}`}
+                  results={calculationResults}
+                  userProfile={userProfile}
+                />
+              ) : (
+                needsForm
+              )}
+            </TabsContent>
+            <TabsContent className="animate-in duration-300 fade-in" value="salary">
+              {ready ? (
+                <PeerComparison
+                  key={userProfile.location}
+                  userProfile={userProfile}
+                />
+              ) : (
+                needsForm
+              )}
+            </TabsContent>
+            <TabsContent className="animate-in duration-300 fade-in" value="rent">
+              <RentCapChecker />
+            </TabsContent>
+          </Tabs>
+        </section>
 
-      {/* Sources Modal */}
-      <Sources 
+        <section className="grid items-start gap-6 lg:grid-cols-2 print:hidden">
+          <Section
+            title="Données de référence"
+            description="Les chiffres officiels utilisés par le calculateur."
+          >
+            <DataVisualization userProfile={userProfile} />
+          </Section>
+          <Section
+            title="Conseils"
+            description="Adaptés à votre âge et à votre zone une fois le formulaire rempli."
+          >
+            <TipsAndAdvice
+              userProfile={userProfile}
+              results={calculationResults}
+            />
+          </Section>
+        </section>
+
+        <section className="flex flex-col gap-4 print:hidden">
+          <h2 className="text-xl font-semibold tracking-tight">
+            Guide de l&apos;épargne à Paris
+          </h2>
+          <Tabs defaultValue="overview" className="gap-4">
+            <ScrollTabs tabs={GUIDE_TABS} />
+            {GUIDE_TABS.map(({ key }) => (
+              <TabsContent key={key} value={key} className="animate-in duration-300 fade-in">
+                <div className="rounded-xl bg-card p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(0_0_0/0.12)] ring-1 ring-foreground/10">
+                  <GuideInfo section={key} />
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </section>
+      </main>
+
+      <footer className="border-t bg-background/80">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-xs leading-relaxed text-muted-foreground">
+          <span className="text-sm font-medium text-foreground">
+            Avis légal et limitation de responsabilité
+          </span>
+          <div className="grid gap-x-8 gap-y-3 md:grid-cols-2">
+            {LEGAL_NOTICES.map(({ title, text }) => (
+              <p key={title}>
+                <strong className="font-medium text-foreground">
+                  {title}.
+                </strong>{" "}
+                {text}
+              </p>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-4">
+            <span>
+              © 2026 Calculateur d&apos;Épargne Paris. Conditions complètes
+              dans le fichier LEGAL.md du projet.
+            </span>
+            <Button
+              variant="link"
+              size="sm"
+              className="h-auto p-0 text-xs print:hidden"
+              onClick={() => setSourcesModalVisible(true)}
+            >
+              Consulter les sources et références
+            </Button>
+          </div>
+        </div>
+      </footer>
+
+      <Sources
         visible={sourcesModalVisible}
         onClose={() => setSourcesModalVisible(false)}
       />
 
       {/* Legal Disclaimer Modal */}
-      <Modal
-        title={
-          <div style={{ color: "#ff4d4f", fontWeight: "bold" }}>
-            ⚠️ AVERTISSEMENT LÉGAL IMPORTANT
-          </div>
-        }
-        open={legalModalVisible}
-        onCancel={() => {}}
-        closable={false}
-        maskClosable={false}
-        footer={
-          <div style={{ textAlign: "center" }}>
-            <div style={{ marginBottom: 16 }}>
-              <Checkbox
-                checked={hasAcceptedTerms}
-                onChange={(e) => setHasAcceptedTerms(e.target.checked)}
-              >
-                J'ai lu et j'accepte intégralement ces conditions
-              </Checkbox>
-            </div>
-            <Button
-              type="primary"
-              danger
-              disabled={!hasAcceptedTerms}
-              onClick={handleAcceptTerms}
-              size="large"
-            >
-              Accepter et Continuer
-            </Button>
-          </div>
-        }
-        width={600}
-      >
-        <div
-          style={{ maxHeight: "400px", overflowY: "auto", padding: "0 8px" }}
+      <Dialog open={legalModalVisible}>
+        <DialogContent
+          showCloseButton={false}
+          onEscapeKeyDown={(event) => event.preventDefault()}
+          onInteractOutside={(event) => event.preventDefault()}
+          className="sm:max-w-lg"
         >
-          <Paragraph
-            style={{ color: "#ff4d4f", fontWeight: "bold", marginBottom: 16 }}
-          >
-            Ce calculateur d'épargne est fourni <strong>"EN L'ÉTAT"</strong>{" "}
-            sans aucune garantie.
-          </Paragraph>
+          <DialogHeader>
+            <DialogTitle>Avant de commencer</DialogTitle>
+            <DialogDescription>
+              Ce calculateur d&apos;épargne est fourni « en l&apos;état », sans
+              aucune garantie.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex max-h-[45svh] flex-col gap-3 overflow-y-auto text-sm text-muted-foreground">
+            <p>
+              <strong className="font-medium text-foreground">
+                Exclusion de responsabilité.
+              </strong>{" "}
+              Les créateurs déclinent toute responsabilité pour les pertes
+              financières, erreurs de calcul, ou décisions prises sur la base
+              de ces résultats.
+            </p>
+            <p>
+              <strong className="font-medium text-foreground">
+                Usage informatif uniquement.
+              </strong>{" "}
+              Ce calculateur fournit des estimations éducatives. Il ne constitue
+              pas un conseil financier professionnel personnalisé.
+            </p>
+            <p>
+              <strong className="font-medium text-foreground">
+                Consultation professionnelle.
+              </strong>{" "}
+              Consultez toujours un conseiller financier agréé avant toute
+              décision financière importante.
+            </p>
+            <p>
+              <strong className="font-medium text-foreground">
+                Limitations des données.
+              </strong>{" "}
+              Les données peuvent être inexactes, obsolètes ou non
+              représentatives de votre situation personnelle.
+            </p>
+            <p>
+              L&apos;utilisation de ce service est entièrement à vos risques et
+              périls. Si vous n&apos;acceptez pas ces conditions, fermez cette
+              page.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="accept-terms"
+              checked={hasAcceptedTerms}
+              onCheckedChange={(checked) => setHasAcceptedTerms(checked === true)}
+            />
+            <Label htmlFor="accept-terms">
+              J&apos;ai lu et j&apos;accepte ces conditions
+            </Label>
+          </div>
+          <DialogFooter>
+            <Button disabled={!hasAcceptedTerms} onClick={handleAcceptTerms}>
+              Accepter et continuer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-          <Paragraph style={{ marginBottom: 12, color: "#262626" }}>
-            <strong>🚫 EXCLUSION DE RESPONSABILITÉ :</strong>
-            <br />
-            Les créateurs DÉCLINENT TOUTE RESPONSABILITÉ pour les pertes
-            financières, erreurs de calcul, ou décisions prises sur la base de
-            ces résultats.
-          </Paragraph>
-
-          <Paragraph style={{ marginBottom: 12, color: "#262626" }}>
-            <strong>📋 USAGE INFORMATIF UNIQUEMENT :</strong>
-            <br />
-            Ce calculateur fournit des estimations éducatives. Il NE CONSTITUE
-            PAS un conseil financier professionnel personnalisé.
-          </Paragraph>
-
-          <Paragraph style={{ marginBottom: 12, color: "#262626" }}>
-            <strong>💼 CONSULTATION PROFESSIONNELLE :</strong>
-            <br />
-            Consultez TOUJOURS un conseiller financier agréé avant toute
-            décision financière importante.
-          </Paragraph>
-
-          <Paragraph style={{ marginBottom: 12, color: "#262626" }}>
-            <strong>📊 LIMITATIONS DES DONNÉES :</strong>
-            <br />
-            Les données peuvent être inexactes, obsolètes ou non représentatives
-            de votre situation personnelle.
-          </Paragraph>
-
-          <Paragraph
-            style={{
-              backgroundColor: "#fff2f0",
-              padding: 12,
-              border: "1px solid #ffccc7",
-              borderRadius: 4,
-              color: "#cf1322",
-              fontWeight: "bold",
-              marginBottom: 0,
-            }}
-          >
-            ⚠️ L'utilisation de ce service est ENTIÈREMENT À VOS RISQUES ET
-            PÉRILS. Si vous n'acceptez pas ces conditions, fermez cette page
-            immédiatement.
-          </Paragraph>
-        </div>
-      </Modal>
-    </Layout>
+      <Toaster />
+    </div>
   );
 }
 
